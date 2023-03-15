@@ -1,0 +1,26 @@
+modLoader="javafml"
+loaderVersion="[43,)"
+license="MIT"
+[[mods]] #mandatory
+modId="treeplacer"
+version="${file.jarVersion}"
+displayName="TreePlacer"
+#displayURL="https://change.me.to.your.mods.homepage.example.invalid/" #optional
+#logoFile="logo.png"
+#credits="Thanks for this example mod goes to Java"
+authors="OutrightWings"
+description='''
+Saplings can dynamically generate differnet trees, based on the biome they are grown in, declared in data files.
+'''
+[[dependencies.treeplacer]]
+    modId="forge"
+    mandatory=true
+    versionRange="[43,)"
+    ordering="NONE"
+    side="BOTH"
+[[dependencies.treeplacer]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="[1.19.2,1.20)"
+    ordering="NONE"
+    side="BOTH"
