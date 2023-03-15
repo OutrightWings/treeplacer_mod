@@ -1,11 +1,22 @@
+buildscript {
+    repositories {
+        maven { url = 'https://maven.minecraftforge.net/' }
+        maven { url = 'https://repo.spongepowered.org/repository/maven-public/' }
+    }
+    dependencies {
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
+        classpath group: 'org.spongepowered', name: 'mixingradle', version: '0.7-SNAPSHOT'
+    }
+}
 plugins {
     id 'maven-publish'
-    id 'net.minecraftforge.gradle' version '5.1.+'
 }
+apply plugin: 'net.minecraftforge.gradle'
+apply plugin: 'org.spongepowered.mixin'
 
 version = '1.0'
 group = 'com.outrightwings.treeplacer'
-archivesBaseName = 'modid'
+archivesBaseName = 'treeplacer'
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
@@ -100,13 +111,19 @@ minecraft {
 
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
+mixin {
+    add sourceSets.main, "treeplacer.refmap.json"
+
+    config "treeplacer.mixins.json"
+}
+
 repositories {
 
 }
 
 dependencies {
     minecraft 'net.minecraftforge:forge:1.19.2-43.2.4'
-
+    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
     // Real mod deobf dependency examples - these get remapped to your current mappings
     // compileOnly fg.deobf("mezz.jei:jei-${mc_version}:${jei_version}:api") // Adds JEI API as a compile dependency
     // runtimeOnly fg.deobf("mezz.jei:jei-${mc_version}:${jei_version}") // Adds the full JEI mod as a runtime dependency

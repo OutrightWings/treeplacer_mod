@@ -1,0 +1,12 @@
+{
+  "required": true,
+  "package": "com.outrightwings.treeplacer.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "refmap": "treeplacer.refmap.json",
+  "mixins": [
+    "AbstractTreeGrowerMixin"
+  ],
+  "client": [
+  ],
+  "minVersion": "0.8"
+}
