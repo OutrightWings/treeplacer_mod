@@ -22,6 +22,7 @@ public class TreeDataReloadListener extends SimplePreparableReloadListener<TreeD
     private static final Logger LOGGER = LogUtils.getLogger();
 
     @Override
+    //Stole and modified SimpleJsonResourceReloadListener method
     protected SaplingOverrides prepare(ResourceManager resourceManager, ProfilerFiller profilerFiller) {
         SaplingOverrides saplingOverrides = new SaplingOverrides();
 
