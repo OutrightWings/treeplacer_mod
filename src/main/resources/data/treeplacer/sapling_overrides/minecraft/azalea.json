@@ -1,0 +1,8 @@
+{
+    "overrides": [
+        {
+          "biome": "wythers:jacaranda_savanna",
+          "structure": "wythers:vegetation/placed_tree/azalea_oak"
+        }
+      ]
+}
