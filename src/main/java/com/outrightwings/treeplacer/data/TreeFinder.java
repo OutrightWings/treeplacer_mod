@@ -9,7 +9,10 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.registries.ForgeRegistries;
 
 public class TreeFinder {
-
+    private static String[][] saplingOverrides;
+    public static void init(String[][] overrides){
+        saplingOverrides = overrides;
+    }
     public static void GetBiomeBasedTreeFeature(ServerLevel level, BlockState state, BlockPos pos){
         ResourceLocation saplingName = ForgeRegistries.BLOCKS.getKey(state.getBlock());
         ResourceLocation biomeName = getBiome(level.getBiome(pos));
