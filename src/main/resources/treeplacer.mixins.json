@@ -4,6 +4,7 @@
   "compatibilityLevel": "JAVA_17",
   "refmap": "treeplacer.refmap.json",
   "mixins": [
+    "AbstractMegaTreeGrowerMixin",
     "AbstractTreeGrowerMixin"
   ],
   "client": [

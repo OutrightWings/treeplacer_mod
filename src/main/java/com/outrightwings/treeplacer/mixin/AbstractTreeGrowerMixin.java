@@ -17,27 +17,32 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 @Mixin(AbstractTreeGrower.class)
 public class AbstractTreeGrowerMixin {
-    //Copied over the function because it wasn't passing holder through :(
   @Inject(at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/world/level/block/grower/AbstractTreeGrower;getConfiguredFeature(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/level/chunk/ChunkGenerator;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/util/RandomSource;Z)Lnet/minecraft/core/Holder;", shift = At.Shift.AFTER), method = "growTree(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/level/chunk/ChunkGenerator;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/util/RandomSource;)Z",locals = LocalCapture.CAPTURE_FAILSOFT,cancellable = true)
     void growTree(ServerLevel level, ChunkGenerator chunkGenerator, BlockPos pos, BlockState state, RandomSource random, CallbackInfoReturnable<Boolean> cir,Holder<? extends ConfiguredFeature<?, ?>> holder){
-      holder = TreeFinder.GetBiomeBasedTreeFeature(level,state,pos,holder);
-      net.minecraftforge.event.level.SaplingGrowTreeEvent event = net.minecraftforge.event.ForgeEventFactory.blockGrowFeature(level, random, pos, holder);
-      if (event.getResult().equals(net.minecraftforge.eventbus.api.Event.Result.DENY) || event.getFeature() == null) {
-          cir.setReturnValue(false);
-      } else {
-          ConfiguredFeature<?, ?> configuredfeature = event.getFeature().value();
-          BlockState blockstate = level.getFluidState(pos).createLegacyBlock();
-          level.setBlock(pos, blockstate, 4);
-          if (configuredfeature.place(level, chunkGenerator, random, pos)) {
-              if (level.getBlockState(pos) == blockstate) {
-                  level.sendBlockUpdated(pos, state, blockstate, 2);
-              }
 
-              cir.setReturnValue(true);
-          } else {
-              level.setBlock(pos, state, 4);
-              cir.setReturnValue(false);
-          }
-      }
+
+      holder = TreeFinder.GetBiomeBasedTreeFeature(level,state,pos,holder);
+
+      cir.setReturnValue(placeSingle(level,chunkGenerator,pos,state,random,holder));
+    }
+
+    private boolean placeSingle(ServerLevel level, ChunkGenerator chunkGenerator, BlockPos pos, BlockState state, RandomSource random,Holder<? extends ConfiguredFeature<?, ?>> holder){
+        net.minecraftforge.event.level.SaplingGrowTreeEvent event = net.minecraftforge.event.ForgeEventFactory.blockGrowFeature(level, random, pos, holder);
+        if (event.getResult().equals(net.minecraftforge.eventbus.api.Event.Result.DENY) || event.getFeature() == null) {
+            return false;
+        } else {
+            ConfiguredFeature<?, ?> configuredFeature = event.getFeature().value();
+            BlockState blockstate = level.getFluidState(pos).createLegacyBlock();
+            level.setBlock(pos, blockstate, 4);
+            if (configuredFeature.place(level, chunkGenerator, random, pos)) {
+                if (level.getBlockState(pos) == blockstate) {
+                    level.sendBlockUpdated(pos, state, blockstate, 2);
+                }
+                return true;
+            } else {
+                level.setBlock(pos, state, 4);
+                return false;
+            }
+        }
     }
 }

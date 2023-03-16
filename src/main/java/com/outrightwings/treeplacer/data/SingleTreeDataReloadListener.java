@@ -16,11 +16,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-public class TreeDataReloadListener extends SimplePreparableReloadListener<TreeDataReloadListener.SaplingOverrides> {
-    private final String directory = "sapling_overrides";
+public class SingleTreeDataReloadListener extends SimplePreparableReloadListener<SaplingOverrides> {
+    protected String directory;
     private final Gson gson = (new GsonBuilder()).setPrettyPrinting().disableHtmlEscaping().create();
     private static final Logger LOGGER = LogUtils.getLogger();
 
+    public SingleTreeDataReloadListener(){
+        directory = "sapling_overrides/single";
+    }
     @Override
     //Stole and modified SimpleJsonResourceReloadListener method
     protected SaplingOverrides prepare(ResourceManager resourceManager, ProfilerFiller profilerFiller) {
@@ -89,46 +92,6 @@ public class TreeDataReloadListener extends SimplePreparableReloadListener<TreeD
 
     @Override
     protected void apply(SaplingOverrides data, ResourceManager resourceManager, ProfilerFiller profilerFiller) {
-        System.out.println("Reload_Apply");
-        System.out.println(data.toString());
-        TreeFinder.init(data);
-    }
-
-    public class SaplingOverrides{
-        private Map<String,Map<String,String>> overrides;
-
-        public SaplingOverrides(){
-            overrides = new HashMap<>();
-        }
-
-        public void put(String sapling, Map<String,String> biomeFeature){
-            overrides.put(sapling,biomeFeature);
-        }
-
-        public String getFeatureID(String saplingID, String biomeID){
-            if(overrides.containsKey(saplingID)){
-                Map<String,String> biomeFeatureMap = overrides.get(saplingID);
-                if(biomeFeatureMap.containsKey(biomeID)){
-                    return biomeFeatureMap.get(biomeID);
-                }
-            }
-            return null;
-        }
-
-        public String toString(){
-            String str = "";
-            for (Map.Entry<String, Map<String, String>> outerEntry : overrides.entrySet()) {
-                String outerKey = outerEntry.getKey();
-                str += outerKey + " : {\n";
-                for (Map.Entry<String, String> innerEntry : outerEntry.getValue().entrySet()) {
-                    String innerKey = innerEntry.getKey();
-                    String innerValue = innerEntry.getValue();
-                    str += "\t"+innerKey+" : "+innerValue+"\n";
-                }
-                str += "}\n";
-            }
-            return str;
-        }
-
+        TreeFinder.initSingle(data);
     }
 }

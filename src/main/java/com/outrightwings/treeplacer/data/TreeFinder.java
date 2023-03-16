@@ -1,13 +1,8 @@
 package com.outrightwings.treeplacer.data;
 
-import com.mojang.brigadier.context.CommandContext;
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
-import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
-import net.minecraft.data.BuiltinRegistries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -15,18 +10,16 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraftforge.registries.ForgeRegistries;
 
-import java.util.Optional;
-
 public class TreeFinder {
-    private static TreeDataReloadListener.SaplingOverrides saplingOverrides;
-    public static void init(TreeDataReloadListener.SaplingOverrides overrides){
-        saplingOverrides = overrides;
-    }
-    public static Holder<? extends ConfiguredFeature<?, ?>> GetBiomeBasedTreeFeature(ServerLevel level, BlockState state, BlockPos pos,Holder<? extends ConfiguredFeature<?, ?>> holder){
+    private static SaplingOverrides singleSaplingOverrides;
+    private static SaplingOverrides megaSaplingOverrides;
+    public static void initSingle(SaplingOverrides overrides){singleSaplingOverrides=overrides;}
+    public static void initMega(SaplingOverrides overrides){megaSaplingOverrides=overrides;}
+    public static Holder<? extends ConfiguredFeature<?, ?>> GetBiomeBasedTreeFeature(ServerLevel level, BlockState state, BlockPos pos, Holder<? extends ConfiguredFeature<?, ?>> holder){
         ResourceLocation saplingName = ForgeRegistries.BLOCKS.getKey(state.getBlock());
         ResourceLocation biomeName = getResourceLocationFromHolder(level.getBiome(pos));
 
-        String featureID = saplingOverrides.getFeatureID(saplingName.toString(),biomeName.toString());
+        String featureID = singleSaplingOverrides.getFeatureID(saplingName.toString(),biomeName.toString());
         System.out.println((featureID != null ? "Override found: " + featureID : "no override found") + " for " + saplingName.toString() + " in " + biomeName.toString());
 
         if(featureID != null) {
