@@ -10,7 +10,7 @@ logoFile="logo.png"
 #credits="Thanks for this example mod goes to Java"
 authors="OutrightWings"
 description='''
-Saplings can dynamically generate differnet trees, based on the biome they are grown in, declared in data files.
+Saplings can dynamically generate different trees, based on the biome they are grown in, declared in data files.
 '''
 [[dependencies.treeplacer]]
     modId="forge"
