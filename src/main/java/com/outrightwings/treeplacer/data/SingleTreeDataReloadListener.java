@@ -37,13 +37,9 @@ public class SingleTreeDataReloadListener extends SimplePreparableReloadListener
             ResourceLocation resourcelocation = entry.getKey();
             String s = resourcelocation.getPath();
 
-            int firstSlashIndex = s.indexOf('/');
-            int secondSlashIndex = s.indexOf('/', firstSlashIndex + 1);
-            String namespace = s.substring(firstSlashIndex + 1, secondSlashIndex);
-
-            int lastSlashIndex = s.lastIndexOf('/');
-            int dotIndex = s.lastIndexOf('.');
-            String saplingName = s.substring(lastSlashIndex + 1, dotIndex);
+            String[] parts = s.split("/");
+            String namespace = parts[2];
+            String saplingName = parts[3].replace(".json","");
 
             ResourceLocation saplingLocation = new ResourceLocation(namespace, saplingName);
 
@@ -92,6 +88,7 @@ public class SingleTreeDataReloadListener extends SimplePreparableReloadListener
 
     @Override
     protected void apply(SaplingOverrides data, ResourceManager resourceManager, ProfilerFiller profilerFiller) {
-        TreeFinder.initSingle(data);
+        TreeOverrideFinder.initSingle(data);
+        System.out.println(data);
     }
 }
