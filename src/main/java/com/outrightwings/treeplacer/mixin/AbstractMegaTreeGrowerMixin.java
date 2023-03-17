@@ -1,6 +1,6 @@
 package com.outrightwings.treeplacer.mixin;
 
-import com.outrightwings.treeplacer.data.TreePlacer;
+import com.outrightwings.treeplacer.growth.TreePlacer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;

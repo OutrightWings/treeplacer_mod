@@ -1,5 +1,6 @@
 package com.outrightwings.treeplacer.data;
 
+import com.outrightwings.treeplacer.growth.TreeOverrideFinder;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.profiling.ProfilerFiller;
 

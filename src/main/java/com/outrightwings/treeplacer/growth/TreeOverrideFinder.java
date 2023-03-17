@@ -1,20 +1,15 @@
-package com.outrightwings.treeplacer.data;
+package com.outrightwings.treeplacer.growth;
 
+import com.outrightwings.treeplacer.data.SaplingOverrides;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.util.RandomSource;
-import net.minecraft.util.Tuple;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraftforge.registries.ForgeRegistries;
-
-import java.awt.*;
 
 public class TreeOverrideFinder {
     private static SaplingOverrides singleSaplingOverrides;
@@ -43,7 +38,6 @@ public class TreeOverrideFinder {
         }
         System.out.println((featureID != null ? "Override found: " + featureID : "no override found") + " for " + saplingName + " in " + biomeName);
 
-        //Biome Specific
         if(featureID != null) {
             ResourceLocation featureName = new ResourceLocation(featureID);
             holder = getConfiguredFeature(level,featureName);

@@ -1,6 +1,6 @@
 package com.outrightwings.treeplacer.mixin;
 
-import com.outrightwings.treeplacer.data.TreePlacer;
+import com.outrightwings.treeplacer.growth.TreePlacer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
@@ -11,8 +11,6 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-
-import java.awt.*;
 
 @Mixin(AbstractTreeGrower.class)
 public abstract class AbstractTreeGrowerMixin {

@@ -1,4 +1,4 @@
-package com.outrightwings.treeplacer.data;
+package com.outrightwings.treeplacer.growth;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
@@ -13,7 +13,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 
-import java.awt.*;
+import java.awt.Point;
+
 
 public class TreePlacer {
     public static int growTree(ServerLevel level, ChunkGenerator chunkGenerator, BlockPos pos, BlockState state, RandomSource random,AbstractTreeGrower treeGrower){
