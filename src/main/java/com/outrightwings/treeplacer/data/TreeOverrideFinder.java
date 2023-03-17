@@ -34,15 +34,19 @@ public class TreeOverrideFinder {
         }else{
             featureID = singleSaplingOverrides.getFeatureID(saplingName.toString(),biomeName.toString());
         }
+        if(featureID == null){
+            if(isMega){
+                featureID = megaSaplingOverrides.getFeatureID(saplingName.toString(),"treeplacer:all_biomes");
+            }else{
+                featureID = singleSaplingOverrides.getFeatureID(saplingName.toString(),"treeplacer:all_biomes");
+            }
+        }
         System.out.println((featureID != null ? "Override found: " + featureID : "no override found") + " for " + saplingName + " in " + biomeName);
 
         //Biome Specific
         if(featureID != null) {
             ResourceLocation featureName = new ResourceLocation(featureID);
             holder = getConfiguredFeature(level,featureName);
-        } else {
-            //Check if general override
-
         }
         return holder;
     }
