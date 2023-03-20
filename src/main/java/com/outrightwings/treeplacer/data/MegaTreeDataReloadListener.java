@@ -11,6 +11,6 @@ public class MegaTreeDataReloadListener extends SingleTreeDataReloadListener{
     @Override
     protected void apply(SaplingOverrides data, ResourceManager resourceManager, ProfilerFiller profilerFiller) {
         TreeOverrideFinder.initMega(data);
-        System.out.println(data);
+        //System.out.println(data);
     }
 }

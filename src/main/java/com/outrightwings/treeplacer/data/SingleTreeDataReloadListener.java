@@ -90,6 +90,6 @@ public class SingleTreeDataReloadListener extends SimplePreparableReloadListener
     @Override
     protected void apply(SaplingOverrides data, ResourceManager resourceManager, ProfilerFiller profilerFiller) {
         TreeOverrideFinder.initSingle(data);
-        System.out.println(data);
+        //System.out.println(data);
     }
 }

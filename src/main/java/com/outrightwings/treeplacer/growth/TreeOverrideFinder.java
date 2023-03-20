@@ -36,7 +36,7 @@ public class TreeOverrideFinder {
                 featureID = singleSaplingOverrides.getFeatureID(saplingName.toString(),"treeplacer:all_biomes");
             }
         }
-        System.out.println((featureID != null ? "Override found: " + featureID : "no override found") + " for " + saplingName + " in " + biomeName);
+
 
         if(featureID != null) {
             ResourceLocation featureName = new ResourceLocation(featureID);
