@@ -3,9 +3,9 @@ loaderVersion="[43,)"
 license="MIT"
 [[mods]] #mandatory
 modId="treeplacer"
-version="${file.jarVersion}"
+version="1.0.0"
 displayName="TreePlacer"
-#displayURL="https://change.me.to.your.mods.homepage.example.invalid/" #optional
+displayURL="https://github.com/OutrightWings/treeplacer_mod" #optional
 logoFile="logo.png"
 #credits="Thanks for this example mod goes to Java"
 authors="OutrightWings"
