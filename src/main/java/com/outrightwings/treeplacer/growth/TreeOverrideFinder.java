@@ -11,6 +11,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraftforge.registries.ForgeRegistries;
 
+import java.util.Optional;
+
 public class TreeOverrideFinder {
     private static SaplingOverrides singleSaplingOverrides;
     private static SaplingOverrides megaSaplingOverrides;
@@ -41,6 +43,7 @@ public class TreeOverrideFinder {
         if(featureID != null) {
             ResourceLocation featureName = new ResourceLocation(featureID);
             holder = getConfiguredFeature(level,featureName);
+            if(holder == null) System.out.println("Feature: " + featureID + " does not exist. On sapling: " + saplingName + " in biome: " + biomeName + ", typo?");
         }
         return holder;
     }
@@ -52,11 +55,15 @@ public class TreeOverrideFinder {
 
     //Stole and modified from ResourceKeyArgument thats used by placeCommand
     private static <T> Registry<T> getRegistry(ServerLevel level, ResourceKey<? extends Registry<T>> key){
-        return level.getServer().registryAccess().registryOrThrow(key);
+        Optional<? extends Registry<T>> registry = level.getServer().registryAccess().registry(key);
+        return registry.orElse(null);
     }
     private static <T> Holder<T> getRegistryKeyType(ServerLevel level, ResourceLocation featureName, ResourceKey<Registry<T>> registryResourceKey){
         ResourceKey<T> key = ResourceKey.create(registryResourceKey, featureName);
-        return getRegistry(level, registryResourceKey).getHolder(key).orElseThrow();
+        Registry<T> registry = getRegistry(level, registryResourceKey);
+        if(registry == null) return null;
+        Optional<Holder<T>> holder = registry.getHolder(key);
+        return holder.orElse(null);
     }
     private static Holder<ConfiguredFeature<?, ?>> getConfiguredFeature(ServerLevel level, ResourceLocation featureName){
         return getRegistryKeyType(level, featureName,Registry.CONFIGURED_FEATURE_REGISTRY);
