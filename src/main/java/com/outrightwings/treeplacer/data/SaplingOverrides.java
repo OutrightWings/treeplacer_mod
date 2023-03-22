@@ -1,5 +1,7 @@
 package com.outrightwings.treeplacer.data;
 
+import net.minecraft.resources.ResourceLocation;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,11 +16,11 @@ public class SaplingOverrides{
         overrides.put(sapling,biomeFeature);
     }
 
-    public String getFeatureID(String saplingID, String biomeID){
-        if(overrides.containsKey(saplingID)){
-            Map<String,String> biomeFeatureMap = overrides.get(saplingID);
-            if(biomeFeatureMap.containsKey(biomeID)){
-                return biomeFeatureMap.get(biomeID);
+    public String getFeatureID(ResourceLocation saplingID, ResourceLocation biomeID){
+        if(overrides.containsKey(saplingID.toString())){
+            Map<String,String> biomeFeatureMap = overrides.get(saplingID.toString());
+            if(biomeFeatureMap.containsKey(biomeID.toString())){
+                return biomeFeatureMap.get(biomeID.toString());
             }
         }
         return null;

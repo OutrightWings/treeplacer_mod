@@ -7,45 +7,44 @@ import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.Tuple;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraftforge.registries.ForgeRegistries;
 
+import java.awt.*;
 import java.util.Optional;
 
 public class TreeOverrideFinder {
+    private static ResourceLocation allBiomes = new ResourceLocation("treeplacer:all_biomes");
     private static SaplingOverrides singleSaplingOverrides;
     private static SaplingOverrides megaSaplingOverrides;
     public static void initSingle(SaplingOverrides overrides){singleSaplingOverrides=overrides;}
     public static void initMega(SaplingOverrides overrides){megaSaplingOverrides=overrides;}
 
-    public static Holder<? extends ConfiguredFeature<?, ?>> GetBiomeBasedTreeFeature(ServerLevel level, BlockState state, BlockPos pos, boolean isMega){
-        Holder<ConfiguredFeature<?, ?>> holder = null;
-
-        ResourceLocation saplingName = ForgeRegistries.BLOCKS.getKey(state.getBlock());
-        ResourceLocation biomeName = getResourceLocationFromHolder(level.getBiome(pos));
+    public static Holder<? extends ConfiguredFeature<?, ?>> GetSaplingOverride(ServerLevel level, BlockState state, BlockPos pos, Tuple<Boolean, Point> isMega){
+        ResourceLocation sapling = ForgeRegistries.BLOCKS.getKey(state.getBlock());
+        ResourceLocation biome = getResourceLocationFromHolder(level.getBiome(pos));
 
         String featureID;
-        if(isMega){
-            featureID = megaSaplingOverrides.getFeatureID(saplingName.toString(),biomeName.toString());
-        }else{
-            featureID = singleSaplingOverrides.getFeatureID(saplingName.toString(),biomeName.toString());
-        }
-        if(featureID == null){
-            if(isMega){
-                featureID = megaSaplingOverrides.getFeatureID(saplingName.toString(),"treeplacer:all_biomes");
-            }else{
-                featureID = singleSaplingOverrides.getFeatureID(saplingName.toString(),"treeplacer:all_biomes");
-            }
-        }
+        featureID = GetBlockOverride(isMega,sapling,pos,level);
+        if(featureID == null) featureID = GetBiomeOverride(isMega,sapling,biome);
+        if(featureID == null) featureID = GetDefaultOverride(isMega,sapling);
 
-
-        if(featureID != null) {
-            ResourceLocation featureName = new ResourceLocation(featureID);
-            holder = getConfiguredFeature(level,featureName);
-            if(holder == null) System.out.println("Feature: " + featureID + " does not exist. On sapling: " + saplingName + " in biome: " + biomeName + ", typo?");
-        }
-        return holder;
+        return getConfiguredFeature(level,featureID);
+    }
+    private static String GetBiomeOverride(Tuple<Boolean, Point> isMega, ResourceLocation sapling, ResourceLocation biome){
+        return isMega.getA() ? megaSaplingOverrides.getFeatureID(sapling,biome) :
+                      singleSaplingOverrides.getFeatureID(sapling,biome) ;
+    }
+    private static String GetBlockOverride(Tuple<Boolean, Point> isMega, ResourceLocation sapling, BlockPos pos, ServerLevel level){
+        BlockPos groundPos = pos.below();
+        ResourceLocation groundBlock = getResourceLocationFromHolder(level.getBlockState(groundPos).getBlockHolder());
+        System.out.println(groundBlock);
+        return null;
+    }
+    private static String GetDefaultOverride(Tuple<Boolean, Point> isMega, ResourceLocation sapling){
+        return GetBiomeOverride(isMega,sapling,allBiomes);
     }
 
     //Stole and modified DebugScreen's method
@@ -65,7 +64,11 @@ public class TreeOverrideFinder {
         Optional<Holder<T>> holder = registry.getHolder(key);
         return holder.orElse(null);
     }
-    private static Holder<ConfiguredFeature<?, ?>> getConfiguredFeature(ServerLevel level, ResourceLocation featureName){
-        return getRegistryKeyType(level, featureName,Registry.CONFIGURED_FEATURE_REGISTRY);
+    private static Holder<ConfiguredFeature<?, ?>> getConfiguredFeature(ServerLevel level, String featureName){
+        if(featureName != null){
+            ResourceLocation feature = new ResourceLocation(featureName);
+            return getRegistryKeyType(level, feature,Registry.CONFIGURED_FEATURE_REGISTRY);
+        }
+        return null;
     }
 }

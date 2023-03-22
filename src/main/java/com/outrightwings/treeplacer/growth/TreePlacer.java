@@ -18,27 +18,27 @@ import java.awt.Point;
 
 public class TreePlacer {
     public static int growTree(ServerLevel level, ChunkGenerator chunkGenerator, BlockPos pos, BlockState state, RandomSource random,AbstractTreeGrower treeGrower){
-        Holder<? extends ConfiguredFeature<?, ?>> holder;
+        Tuple<Boolean, Point> isMega = isTwobyTwo(level,pos,state,0);
 
-        Tuple<Boolean, Point> isMega = isTwoByTwoSapling(level,pos,state);
-        //Mega tree grow
+        int attempt;
         if(isMega.getA()){
-            holder = TreeOverrideFinder.GetBiomeBasedTreeFeature(level,state,pos,true);
-            if(holder != null){
-                return placeMega(level,chunkGenerator,pos,state,random,isMega.getB().x,isMega.getB().y,holder);
-            }
-            //Vanilla option
-            if(treeGrower instanceof AbstractMegaTreeGrower){
-                return -1;
-            }
+            //try mega
+            attempt = attemptOverride(level,chunkGenerator,pos,state,random,isMega);
+            if(treeGrower instanceof AbstractMegaTreeGrower || attempt != -1) return attempt;
+            isMega.setA(false);
         }
-        //Single tree grow
-        holder = TreeOverrideFinder.GetBiomeBasedTreeFeature(level,state,pos,false);
-        if(holder != null){
-            return placeSingle(level,chunkGenerator,pos,state,random,holder);
-        }
-        //vanilla option
-        return -1;
+        //Try single
+        attempt = attemptOverride(level,chunkGenerator,pos,state,random,isMega);
+        return attempt;
+    }
+    private static int attemptOverride(ServerLevel level, ChunkGenerator chunkGenerator, BlockPos pos, BlockState state, RandomSource random,Tuple<Boolean, Point> isMega){
+        Holder<? extends ConfiguredFeature<?, ?>> holder;
+        holder = TreeOverrideFinder.GetSaplingOverride(level,state,pos,isMega);
+        return placeTree(level,chunkGenerator,pos,state,random,holder,isMega);
+    }
+    private static int placeTree(ServerLevel level, ChunkGenerator chunkGenerator, BlockPos pos, BlockState state, RandomSource random,Holder<? extends ConfiguredFeature<?, ?>> holder,Tuple<Boolean, Point> isMega){
+        if(isMega.getA()) return placeMega(level,chunkGenerator,pos,state,random,isMega.getB(),holder);
+        else return placeSingle(level,chunkGenerator,pos,state,random,holder);
     }
     private static int placeSingle(ServerLevel level, ChunkGenerator chunkGenerator, BlockPos pos, BlockState state, RandomSource random,Holder<? extends ConfiguredFeature<?, ?>> holder){
         net.minecraftforge.event.level.SaplingGrowTreeEvent event = net.minecraftforge.event.ForgeEventFactory.blockGrowFeature(level, random, pos, holder);
@@ -59,43 +59,45 @@ public class TreePlacer {
             }
         }
     }
-    private static int placeMega(ServerLevel level, ChunkGenerator chunkGenerator, BlockPos pos, BlockState state, RandomSource randomSource, int i, int j, Holder<? extends ConfiguredFeature<?, ?>> holder) {
+    private static int placeMega(ServerLevel level, ChunkGenerator chunkGenerator, BlockPos pos, BlockState state, RandomSource randomSource, Point point, Holder<? extends ConfiguredFeature<?, ?>> holder) {
         net.minecraftforge.event.level.SaplingGrowTreeEvent event = net.minecraftforge.event.ForgeEventFactory.blockGrowFeature(level, randomSource, pos, holder);
         if (event.getResult().equals(net.minecraftforge.eventbus.api.Event.Result.DENY) || event.getFeature() == null) {
             return -1;
         } else {
             ConfiguredFeature<?, ?> configuredfeature = event.getFeature().value();
             BlockState blockstate = Blocks.AIR.defaultBlockState();
-            level.setBlock(pos.offset(i, 0, j), blockstate, 4);
-            level.setBlock(pos.offset(i + 1, 0, j), blockstate, 4);
-            level.setBlock(pos.offset(i, 0, j + 1), blockstate, 4);
-            level.setBlock(pos.offset(i + 1, 0, j + 1), blockstate, 4);
-            if (configuredfeature.place(level, chunkGenerator, randomSource, pos.offset(i, 0, j))) {
+            int x = point.x;
+            int z = point.y;
+            level.setBlock(pos.offset(x, 0, z), blockstate, 4);
+            level.setBlock(pos.offset(x + 1, 0, z), blockstate, 4);
+            level.setBlock(pos.offset(x, 0, z + 1), blockstate, 4);
+            level.setBlock(pos.offset(x + 1, 0, z + 1), blockstate, 4);
+            if (configuredfeature.place(level, chunkGenerator, randomSource, pos.offset(x, 0, z))) {
                 return 1;
             } else {
-                level.setBlock(pos.offset(i, 0, j), state, 4);
-                level.setBlock(pos.offset(i + 1, 0, j), state, 4);
-                level.setBlock(pos.offset(i, 0, j + 1), state, 4);
-                level.setBlock(pos.offset(i + 1, 0, j + 1), state, 4);
+                level.setBlock(pos.offset(x, 0, z), state, 4);
+                level.setBlock(pos.offset(x + 1, 0, z), state, 4);
+                level.setBlock(pos.offset(x, 0, z + 1), state, 4);
+                level.setBlock(pos.offset(x + 1, 0, z + 1), state, 4);
                 return 0;
             }
         }
     }
     //Took AbstractMegaTreeGrower's function and made it more readable + combined
-    public static Tuple<Boolean, Point> isTwoByTwoSapling(ServerLevel level, BlockPos pos, BlockState state){
+    public static Tuple<Boolean, Point> isTwobyTwo(ServerLevel level, BlockPos pos, BlockState state, int yOffset){
         for(int i = 0; i >= -1; --i) {
             for(int j = 0; j >= -1; --j) {
                 Block block = state.getBlock();
-                BlockState cornerA = level.getBlockState(pos.offset(i, 0, j));
-                BlockState cornerB = level.getBlockState(pos.offset(i + 1, 0, j));
-                BlockState cornerC = level.getBlockState(pos.offset(i, 0, j + 1));
-                BlockState cornerD = level.getBlockState(pos.offset(i + 1, 0, j + 1));
+                BlockState cornerA = level.getBlockState(pos.offset(i, yOffset, j));
+                BlockState cornerB = level.getBlockState(pos.offset(i + 1, yOffset, j));
+                BlockState cornerC = level.getBlockState(pos.offset(i, yOffset, j + 1));
+                BlockState cornerD = level.getBlockState(pos.offset(i + 1, yOffset, j + 1));
                 boolean allSame = cornerA.is(block) && cornerB.is(block) &&  cornerC.is(block) && cornerD.is(block);
                 if (allSame) {
                     return new Tuple<>(true,new Point(i,j));
                 }
             }
         }
-        return new Tuple<>(false,null);
+        return new Tuple<>(false,new Point(-1,-1));
     }
 }
