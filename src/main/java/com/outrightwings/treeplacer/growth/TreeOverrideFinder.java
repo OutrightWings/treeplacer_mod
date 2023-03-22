@@ -28,23 +28,27 @@ public class TreeOverrideFinder {
 
         String featureID;
         featureID = GetBlockOverride(isMega,sapling,pos,level);
-        if(featureID == null) featureID = GetBiomeOverride(isMega,sapling,biome);
+        if(featureID == null) featureID = GetSimpleOverride(isMega,sapling,biome);
         if(featureID == null) featureID = GetDefaultOverride(isMega,sapling);
 
         return getConfiguredFeature(level,featureID);
     }
-    private static String GetBiomeOverride(Tuple<Boolean, Point> isMega, ResourceLocation sapling, ResourceLocation biome){
-        return isMega.getA() ? megaSaplingOverrides.getFeatureID(sapling,biome) :
-                      singleSaplingOverrides.getFeatureID(sapling,biome) ;
+    private static String GetSimpleOverride(Tuple<Boolean, Point> isMega, ResourceLocation sapling, ResourceLocation key){
+        return isMega.getA() ? megaSaplingOverrides.getFeatureID(sapling,key) :
+                      singleSaplingOverrides.getFeatureID(sapling,key) ;
     }
     private static String GetBlockOverride(Tuple<Boolean, Point> isMega, ResourceLocation sapling, BlockPos pos, ServerLevel level){
         BlockPos groundPos = pos.below();
-        ResourceLocation groundBlock = getResourceLocationFromHolder(level.getBlockState(groundPos).getBlockHolder());
-        System.out.println(groundBlock);
-        return null;
+        BlockState groundState = level.getBlockState(groundPos);
+        ResourceLocation groundBlock = getResourceLocationFromHolder(groundState.getBlockHolder());
+        if(isMega.getA()){
+            boolean groundAllSame = TreePlacer.isAllSame(level,groundPos,groundState,isMega.getB());
+            if(!groundAllSame) return null;
+        }
+        return GetSimpleOverride(isMega,sapling,groundBlock);
     }
     private static String GetDefaultOverride(Tuple<Boolean, Point> isMega, ResourceLocation sapling){
-        return GetBiomeOverride(isMega,sapling,allBiomes);
+        return GetSimpleOverride(isMega,sapling,allBiomes);
     }
 
     //Stole and modified DebugScreen's method

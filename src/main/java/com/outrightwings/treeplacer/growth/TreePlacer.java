@@ -18,7 +18,7 @@ import java.awt.Point;
 
 public class TreePlacer {
     public static int growTree(ServerLevel level, ChunkGenerator chunkGenerator, BlockPos pos, BlockState state, RandomSource random,AbstractTreeGrower treeGrower){
-        Tuple<Boolean, Point> isMega = isTwobyTwo(level,pos,state,0);
+        Tuple<Boolean, Point> isMega = isTwobyTwo(level,pos,state);
 
         int attempt;
         if(isMega.getA()){
@@ -84,20 +84,26 @@ public class TreePlacer {
         }
     }
     //Took AbstractMegaTreeGrower's function and made it more readable + combined
-    public static Tuple<Boolean, Point> isTwobyTwo(ServerLevel level, BlockPos pos, BlockState state, int yOffset){
+    public static Tuple<Boolean, Point> isTwobyTwo(ServerLevel level, BlockPos pos, BlockState state){
         for(int i = 0; i >= -1; --i) {
             for(int j = 0; j >= -1; --j) {
-                Block block = state.getBlock();
-                BlockState cornerA = level.getBlockState(pos.offset(i, yOffset, j));
-                BlockState cornerB = level.getBlockState(pos.offset(i + 1, yOffset, j));
-                BlockState cornerC = level.getBlockState(pos.offset(i, yOffset, j + 1));
-                BlockState cornerD = level.getBlockState(pos.offset(i + 1, yOffset, j + 1));
-                boolean allSame = cornerA.is(block) && cornerB.is(block) &&  cornerC.is(block) && cornerD.is(block);
+                boolean allSame = isAllSame(level,pos,state,new Point(i,j));
                 if (allSame) {
                     return new Tuple<>(true,new Point(i,j));
                 }
             }
         }
-        return new Tuple<>(false,new Point(-1,-1));
+        return new Tuple<>(false,null);
+    }
+    public static boolean isAllSame(ServerLevel level, BlockPos pos, BlockState state,Point point){
+        int x = point.x;
+        int z = point.y;
+        Block block = state.getBlock();
+        BlockState cornerA = level.getBlockState(pos.offset(x, 0, z));
+        BlockState cornerB = level.getBlockState(pos.offset(x + 1, 0, z));
+        BlockState cornerC = level.getBlockState(pos.offset(x, 0, z + 1));
+        BlockState cornerD = level.getBlockState(pos.offset(x + 1, 0, z + 1));
+
+        return cornerA.is(block) && cornerB.is(block) &&  cornerC.is(block) && cornerD.is(block);
     }
 }
