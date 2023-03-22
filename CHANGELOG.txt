@@ -1,0 +1,5 @@
+Changelog: 1.1.0
+* Giant Mushrooms are now able to be overridden
+* New override type Block, allows you to say instead of a biome a block that must be under the sapling(s) for the override to place. Check the wiki
+* Warped and Crimson Fungus are now always bonemealable so that you can have them grow into trees while on other blocks than nylium. With no overrides on these 'saplings' they still will only grow when on nylium as in vanilla.
+* Fixed ghost block issue with 2x2 trees if the base of the tree did not cover all 4 saplings
