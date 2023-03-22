@@ -50,7 +50,7 @@ public class TreePlacer {
             level.setBlock(pos, blockstate, 4);
             if (configuredFeature.place(level, chunkGenerator, random, pos)) {
                 if (level.getBlockState(pos) == blockstate) {
-                    level.sendBlockUpdated(pos, state, blockstate, 2);
+                    level.setBlock(pos, Blocks.AIR.defaultBlockState(), 2);
                 }
                 return 1;
             } else {
@@ -68,17 +68,17 @@ public class TreePlacer {
             BlockState blockstate = Blocks.AIR.defaultBlockState();
             int x = point.x;
             int z = point.y;
-            level.setBlock(pos.offset(x, 0, z), blockstate, 4);
-            level.setBlock(pos.offset(x + 1, 0, z), blockstate, 4);
-            level.setBlock(pos.offset(x, 0, z + 1), blockstate, 4);
-            level.setBlock(pos.offset(x + 1, 0, z + 1), blockstate, 4);
+            level.setBlock(pos.offset(x, 0, z), blockstate, 2);
+            level.setBlock(pos.offset(x + 1, 0, z), blockstate, 2);
+            level.setBlock(pos.offset(x, 0, z + 1), blockstate, 2);
+            level.setBlock(pos.offset(x + 1, 0, z + 1), blockstate, 2);
             if (configuredfeature.place(level, chunkGenerator, randomSource, pos.offset(x, 0, z))) {
                 return 1;
             } else {
-                level.setBlock(pos.offset(x, 0, z), state, 4);
-                level.setBlock(pos.offset(x + 1, 0, z), state, 4);
-                level.setBlock(pos.offset(x, 0, z + 1), state, 4);
-                level.setBlock(pos.offset(x + 1, 0, z + 1), state, 4);
+                level.setBlock(pos.offset(x, 0, z), state, 2);
+                level.setBlock(pos.offset(x + 1, 0, z), state, 2);
+                level.setBlock(pos.offset(x, 0, z + 1), state, 2);
+                level.setBlock(pos.offset(x + 1, 0, z + 1), state, 2);
                 return 0;
             }
         }
