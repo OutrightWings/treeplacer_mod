@@ -17,14 +17,14 @@ import java.awt.Point;
 
 
 public class TreePlacer {
-    public static int growTree(ServerLevel level, ChunkGenerator chunkGenerator, BlockPos pos, BlockState state, RandomSource random,AbstractTreeGrower treeGrower){
+    public static int growTree(ServerLevel level, ChunkGenerator chunkGenerator, BlockPos pos, BlockState state, RandomSource random,boolean isAbstractMegaGrower){
         Tuple<Boolean, Point> isMega = isTwobyTwo(level,pos,state);
 
         int attempt;
         if(isMega.getA()){
             //try mega
             attempt = attemptOverride(level,chunkGenerator,pos,state,random,isMega);
-            if(treeGrower instanceof AbstractMegaTreeGrower || attempt != -1) return attempt;
+            if(isAbstractMegaGrower|| attempt != -1) return attempt;
             isMega.setA(false);
         }
         //Try single

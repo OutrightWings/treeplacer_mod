@@ -5,7 +5,9 @@
   "refmap": "treeplacer.refmap.json",
   "mixins": [
     "AbstractMegaTreeGrowerMixin",
-    "AbstractTreeGrowerMixin"
+    "AbstractTreeGrowerMixin",
+    "FungusBlockMixin",
+    "MushroomBlockMixin"
   ],
   "client": [
   ],

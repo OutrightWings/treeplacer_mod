@@ -16,7 +16,7 @@ import java.awt.*;
 import java.util.Optional;
 
 public class TreeOverrideFinder {
-    private static ResourceLocation allBiomes = new ResourceLocation("treeplacer:all_biomes");
+    private static final ResourceLocation allBiomes = new ResourceLocation("treeplacer:all_biomes");
     private static SaplingOverrides singleSaplingOverrides;
     private static SaplingOverrides megaSaplingOverrides;
     public static void initSingle(SaplingOverrides overrides){singleSaplingOverrides=overrides;}
@@ -25,7 +25,7 @@ public class TreeOverrideFinder {
     public static Holder<? extends ConfiguredFeature<?, ?>> GetSaplingOverride(ServerLevel level, BlockState state, BlockPos pos, Tuple<Boolean, Point> isMega){
         ResourceLocation sapling = ForgeRegistries.BLOCKS.getKey(state.getBlock());
         ResourceLocation biome = getResourceLocationFromHolder(level.getBiome(pos));
-
+        System.out.println(sapling);
         String featureID;
         featureID = GetBlockOverride(isMega,sapling,pos,level);
         if(featureID == null) featureID = GetSimpleOverride(isMega,sapling,biome);

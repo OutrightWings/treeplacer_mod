@@ -17,7 +17,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public abstract class AbstractMegaTreeGrowerMixin extends AbstractTreeGrower {
     @Inject(at = @At(value = "HEAD"), method = "growTree(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/level/chunk/ChunkGenerator;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/util/RandomSource;)Z",cancellable = true)
     private void growTree(ServerLevel level, ChunkGenerator chunkGenerator, BlockPos pos, BlockState state, RandomSource random, CallbackInfoReturnable<Boolean> cir){
-        int placed = TreePlacer.growTree(level,chunkGenerator,pos,state,random,(AbstractMegaTreeGrower)(Object)this);
+        int placed = TreePlacer.growTree(level,chunkGenerator,pos,state,random,true);
         if(placed != -1) cir.setReturnValue(placed == 1);
     }
 }
