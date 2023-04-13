@@ -25,7 +25,7 @@ public class TreeOverrideFinder {
     public static Holder<? extends ConfiguredFeature<?, ?>> GetSaplingOverride(ServerLevel level, BlockState state, BlockPos pos, Tuple<Boolean, Point> isMega){
         ResourceLocation sapling = ForgeRegistries.BLOCKS.getKey(state.getBlock());
         ResourceLocation biome = getResourceLocationFromHolder(level.getBiome(pos));
-        System.out.println(sapling);
+        //System.out.println(sapling + " " + biome + " " + pos);
         String featureID;
         featureID = GetBlockOverride(isMega,sapling,pos,level);
         if(featureID == null) featureID = GetSimpleOverride(isMega,sapling,biome);

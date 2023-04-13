@@ -127,10 +127,10 @@ dependencies {
     minecraft 'net.minecraftforge:forge:1.19.2-43.2.4'
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 
-    runtimeOnly fg.deobf('curse.maven:Wythers-490686:4127875')
-
-    runtimeOnly fg.deobf('curse.maven:windswept-636321:4381373')
-    runtimeOnly fg.deobf('curse.maven:blueprint-382216:4442628')
+    runtimeOnly fg.deobf('curse.maven:terralith-513688:4167132')
+    runtimeOnly fg.deobf('curse.maven:create-328085:4371809')
+    //runtimeOnly fg.deobf('curse.maven:windswept-636321:4381373')
+    //runtimeOnly fg.deobf('curse.maven:blueprint-382216:4442628')
 }
 
 // Example for how to get properties into the manifest for reading at runtime.
