@@ -1,0 +1,14 @@
+{
+	"required": true,
+	"package": "com.outrightwings.mixin",
+	"compatibilityLevel": "JAVA_17",
+	"mixins": [
+		"AbstractMegaTreeGrowerMixin",
+		"AbstractTreeGrowerMixin",
+		"FungusBlockMixin",
+		"MushroomBlockMixin"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	}
+}
