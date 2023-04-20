@@ -55,23 +55,9 @@ public class TreeOverrideFinder {
         return holder.unwrap().map(ResourceKey::location, (empty) -> null);
     }
 
-    //Stole and modified from ResourceKeyArgument thats used by placeCommand
-    private static <T> Registry<T> getRegistry(ServerLevel level, ResourceKey<? extends Registry<T>> key){
-        Optional<? extends Registry<T>> registry = level.getServer().registryAccess().registry(key);
-        return registry.orElse(null);
-    }
-    private static <T> Holder<T> getRegistryKeyType(ServerLevel level, ResourceLocation featureName, ResourceKey<Registry<T>> registryResourceKey){
-        ResourceKey<T> key = ResourceKey.create(registryResourceKey, featureName);
-        Registry<T> registry = getRegistry(level, registryResourceKey);
-        if(registry == null) return null;
-        Optional<Holder<T>> holder = registry.getHolder(key);
-        return holder.orElse(null);
-    }
+
     private static Holder<ConfiguredFeature<?, ?>> getConfiguredFeature(ServerLevel level, String featureName){
-        if(featureName != null){
-            ResourceLocation feature = new ResourceLocation(featureName);
-            return getRegistryKeyType(level, feature,Registry.CONFIGURED_FEATURE_REGISTRY);
-        }
+        //stuff
         return null;
     }
 }
