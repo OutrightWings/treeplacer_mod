@@ -1,17 +1,17 @@
 {
 	"schemaVersion": 1,
 	"id": "treeplacer",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"name": "treeplacer",
 	"description": "Saplings can dynamically generate different trees, based on the biome they are grown in, declared in data files.",
 	"authors": [
 		"OutrightWings"
 	],
 	"contact": {
-		"homepage": "https://www.curseforge.com/minecraft/mc-mods/treeplacer",
+		"homepage": "https://modrinth.com/mod/treeplacer",
 		"sources": "https://github.com/OutrightWings/treeplacer_mod"
 	},
-	"license": "CC0-1.0",
+	"license": "MIT",
 	"icon": "assets/treeplacer/icon.png",
 	"environment": "*",
 	"entrypoints": {
@@ -23,12 +23,8 @@
 		"treeplacer.mixins.json"
 	],
 	"depends": {
-		"fabricloader": ">=0.14.19",
-		"minecraft": "~1.19.2",
-		"java": ">=17",
-		"fabric-api": "*"
-	},
-	"suggests": {
-		"another-mod": "*"
+		"fabricloader": ">=0.14.0",
+		"minecraft": ">=1.19",
+		"java": ">=17"
 	}
 }
