@@ -61,6 +61,7 @@ public class TreeOverrideFinder {
     }
 
     private static Holder<ConfiguredFeature<?, ?>> getConfiguredFeature(ServerLevel level, String feature){
+        if(feature == null) return null;
         ResourceKey<ConfiguredFeature<?, ?>> key = FeatureUtils.createKey(feature);
         return level.registryAccess().registryOrThrow(Registries.CONFIGURED_FEATURE).getHolder(key).orElse(null);
     }
