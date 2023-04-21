@@ -1,9 +1,14 @@
 package com.outrightwings.growth;
 
+import com.mojang.serialization.Codec;
 import com.outrightwings.data.SaplingOverrides;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Holder;
-import net.minecraft.core.Registry;
+import net.minecraft.commands.CommandBuildContext;
+import net.minecraft.commands.Commands;
+import net.minecraft.core.*;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.data.registries.VanillaRegistries;
+import net.minecraft.data.worldgen.features.FeatureUtils;
+import net.minecraft.nbt.NbtOps;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -56,8 +61,9 @@ public class TreeOverrideFinder {
     }
 
 
-    private static Holder<ConfiguredFeature<?, ?>> getConfiguredFeature(ServerLevel level, String featureName){
-        //stuff
-        return null;
+    private static Holder<ConfiguredFeature<?, ?>> getConfiguredFeature(ServerLevel level, String feature){
+        ResourceKey<ConfiguredFeature<?, ?>> key = FeatureUtils.createKey(feature);
+        Holder holder = level.registryAccess().registryOrThrow(Registries.CONFIGURED_FEATURE).getHolder(key).orElse(null);
+        return holder;
     }
 }

@@ -4,7 +4,6 @@ import com.outrightwings.growth.TreePlacer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.FungusBlock;
 import net.minecraft.world.level.block.state.BlockState;
