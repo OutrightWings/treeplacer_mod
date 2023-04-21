@@ -5,6 +5,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.FungusBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import org.spongepowered.asm.mixin.Mixin;
@@ -20,8 +21,8 @@ public class FungusBlockMixin {
         int placed = TreePlacer.growTree(level,level.getChunkSource().getGenerator(),pos,state,random,false);
         if(placed != -1) cir.cancel();
     }
-    @Inject(at = @At(value = "HEAD"), method = "isValidBonemealTarget(Lnet/minecraft/world/level/BlockGetter;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;Z)Z",cancellable = true)
-    private void isValidBonemealTarget(BlockGetter p_53608_, BlockPos p_53609_, BlockState p_53610_, boolean p_53611_, CallbackInfoReturnable<Boolean> cir){
+    @Inject(at = @At(value = "HEAD"), method = "isValidBonemealTarget(Lnet/minecraft/world/level/LevelReader;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;Z)Z",cancellable = true)
+    private void isValidBonemealTarget(LevelReader p_256655_, BlockPos p_256553_, BlockState p_256213_, boolean p_256270_, CallbackInfoReturnable<Boolean> cir){
         cir.setReturnValue(true);
     }
 }

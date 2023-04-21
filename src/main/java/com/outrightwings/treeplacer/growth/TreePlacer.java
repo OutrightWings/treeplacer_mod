@@ -5,6 +5,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.Tuple;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.grower.AbstractMegaTreeGrower;
@@ -32,15 +33,15 @@ public class TreePlacer {
         return attempt;
     }
     private static int attemptOverride(ServerLevel level, ChunkGenerator chunkGenerator, BlockPos pos, BlockState state, RandomSource random,Tuple<Boolean, Point> isMega){
-        Holder<? extends ConfiguredFeature<?, ?>> holder;
+        Holder<ConfiguredFeature<?, ?>> holder;
         holder = TreeOverrideFinder.GetSaplingOverride(level,state,pos,isMega);
         return placeTree(level,chunkGenerator,pos,state,random,holder,isMega);
     }
-    private static int placeTree(ServerLevel level, ChunkGenerator chunkGenerator, BlockPos pos, BlockState state, RandomSource random,Holder<? extends ConfiguredFeature<?, ?>> holder,Tuple<Boolean, Point> isMega){
+    private static int placeTree(ServerLevel level, ChunkGenerator chunkGenerator, BlockPos pos, BlockState state, RandomSource random,Holder<ConfiguredFeature<?, ?>> holder,Tuple<Boolean, Point> isMega){
         if(isMega.getA()) return placeMega(level,chunkGenerator,pos,state,random,isMega.getB(),holder);
         else return placeSingle(level,chunkGenerator,pos,state,random,holder);
     }
-    private static int placeSingle(ServerLevel level, ChunkGenerator chunkGenerator, BlockPos pos, BlockState state, RandomSource random,Holder<? extends ConfiguredFeature<?, ?>> holder){
+    private static int placeSingle(ServerLevel level, ChunkGenerator chunkGenerator, BlockPos pos, BlockState state, RandomSource random,Holder<ConfiguredFeature<?, ?>> holder){
         net.minecraftforge.event.level.SaplingGrowTreeEvent event = net.minecraftforge.event.ForgeEventFactory.blockGrowFeature(level, random, pos, holder);
         if (event.getResult().equals(net.minecraftforge.eventbus.api.Event.Result.DENY) || event.getFeature() == null) {
             return -1;
@@ -59,7 +60,7 @@ public class TreePlacer {
             }
         }
     }
-    private static int placeMega(ServerLevel level, ChunkGenerator chunkGenerator, BlockPos pos, BlockState state, RandomSource randomSource, Point point, Holder<? extends ConfiguredFeature<?, ?>> holder) {
+    private static int placeMega(ServerLevel level, ChunkGenerator chunkGenerator, BlockPos pos, BlockState state, RandomSource randomSource, Point point, Holder<ConfiguredFeature<?, ?>> holder) {
         net.minecraftforge.event.level.SaplingGrowTreeEvent event = net.minecraftforge.event.ForgeEventFactory.blockGrowFeature(level, randomSource, pos, holder);
         if (event.getResult().equals(net.minecraftforge.eventbus.api.Event.Result.DENY) || event.getFeature() == null) {
             return -1;

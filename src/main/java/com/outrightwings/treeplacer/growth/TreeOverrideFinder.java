@@ -4,6 +4,8 @@ import com.outrightwings.treeplacer.data.SaplingOverrides;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.data.worldgen.features.FeatureUtils;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -22,7 +24,7 @@ public class TreeOverrideFinder {
     public static void initSingle(SaplingOverrides overrides){singleSaplingOverrides=overrides;}
     public static void initMega(SaplingOverrides overrides){megaSaplingOverrides=overrides;}
 
-    public static Holder<? extends ConfiguredFeature<?, ?>> GetSaplingOverride(ServerLevel level, BlockState state, BlockPos pos, Tuple<Boolean, Point> isMega){
+    public static Holder<ConfiguredFeature<?, ?>> GetSaplingOverride(ServerLevel level, BlockState state, BlockPos pos, Tuple<Boolean, Point> isMega){
         ResourceLocation sapling = ForgeRegistries.BLOCKS.getKey(state.getBlock());
         ResourceLocation biome = getResourceLocationFromHolder(level.getBiome(pos));
         //System.out.println(sapling + " " + biome + " " + pos);
@@ -56,23 +58,9 @@ public class TreeOverrideFinder {
         return holder.unwrap().map(ResourceKey::location, (empty) -> null);
     }
 
-    //Stole and modified from ResourceKeyArgument thats used by placeCommand
-    private static <T> Registry<T> getRegistry(ServerLevel level, ResourceKey<? extends Registry<T>> key){
-        Optional<? extends Registry<T>> registry = level.getServer().registryAccess().registry(key);
-        return registry.orElse(null);
-    }
-    private static <T> Holder<T> getRegistryKeyType(ServerLevel level, ResourceLocation featureName, ResourceKey<Registry<T>> registryResourceKey){
-        ResourceKey<T> key = ResourceKey.create(registryResourceKey, featureName);
-        Registry<T> registry = getRegistry(level, registryResourceKey);
-        if(registry == null) return null;
-        Optional<Holder<T>> holder = registry.getHolder(key);
-        return holder.orElse(null);
-    }
-    private static Holder<ConfiguredFeature<?, ?>> getConfiguredFeature(ServerLevel level, String featureName){
-        if(featureName != null){
-            ResourceLocation feature = new ResourceLocation(featureName);
-            return getRegistryKeyType(level, feature,Registry.CONFIGURED_FEATURE_REGISTRY);
-        }
-        return null;
+    private static Holder<ConfiguredFeature<?, ?>> getConfiguredFeature(ServerLevel level, String feature){
+        if(feature == null) return null;
+        ResourceKey<ConfiguredFeature<?, ?>> key = FeatureUtils.createKey(feature);
+        return level.registryAccess().registryOrThrow(Registries.CONFIGURED_FEATURE).getHolder(key).orElse(null);
     }
 }
