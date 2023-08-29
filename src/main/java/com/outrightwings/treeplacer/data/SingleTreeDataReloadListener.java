@@ -8,6 +8,7 @@ import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
 import net.minecraft.util.GsonHelper;
+import net.minecraft.util.Tuple;
 import net.minecraft.util.profiling.ProfilerFiller;
 import org.slf4j.Logger;
 
@@ -21,7 +22,6 @@ public class SingleTreeDataReloadListener extends SimplePreparableReloadListener
     protected String directory;
     private final Gson gson = (new GsonBuilder()).setPrettyPrinting().disableHtmlEscaping().create();
     private static final Logger LOGGER = LogUtils.getLogger();
-
     public SingleTreeDataReloadListener(){
         directory = "sapling_overrides/single";
     }
@@ -29,12 +29,8 @@ public class SingleTreeDataReloadListener extends SimplePreparableReloadListener
     //Stole and modified SimpleJsonResourceReloadListener method
     protected SaplingOverrides prepare(ResourceManager resourceManager, ProfilerFiller profilerFiller) {
         SaplingOverrides saplingOverrides = new SaplingOverrides();
-
-        int i = this.directory.length() + 1;
-
-        for(Map.Entry<ResourceLocation, Resource> entry : resourceManager.listResources(this.directory, (location) -> {
-            return location.getPath().endsWith(".json");
-        }).entrySet()) {
+        Boolean replace = false;
+        for(Map.Entry<ResourceLocation, Resource> entry : resourceManager.listResources(this.directory, (location) -> location.getPath().endsWith(".json")).entrySet()) {
             ResourceLocation resourcelocation = entry.getKey();
             String s = resourcelocation.getPath();
 
@@ -50,8 +46,10 @@ public class SingleTreeDataReloadListener extends SimplePreparableReloadListener
                 try {
                     JsonObject json = GsonHelper.fromJson(this.gson,reader,JsonObject.class);
                     if (json != null) {
+                        replace = json.get("replace").getAsBoolean();
+
                         Map<String,String> biomeFeatureMap = new HashMap<>();
-                        for(Map.Entry<String, JsonElement> jentry: json.entrySet()){
+                        for(Map.Entry<String, JsonElement> jentry: json.get("values").getAsJsonObject().entrySet()){
                             String biomeID = jentry.getKey();
                             String featureID = jentry.getValue().getAsString();
 
@@ -90,6 +88,6 @@ public class SingleTreeDataReloadListener extends SimplePreparableReloadListener
     @Override
     protected void apply(SaplingOverrides data, ResourceManager resourceManager, ProfilerFiller profilerFiller) {
         TreeOverrideFinder.initSingle(data);
-        //System.out.println(data);
+        System.out.println(data);
     }
 }
