@@ -3,6 +3,7 @@ package com.outrightwings.treeplacer.data;
 import com.google.gson.*;
 import com.mojang.logging.LogUtils;
 import com.outrightwings.treeplacer.growth.TreeOverrideFinder;
+import net.minecraft.resources.FileToIdConverter;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -29,11 +30,11 @@ public class SingleTreeDataReloadListener extends SimplePreparableReloadListener
     //Stole and modified SimpleJsonResourceReloadListener method
     protected SaplingOverrides prepare(ResourceManager resourceManager, ProfilerFiller profilerFiller) {
         SaplingOverrides saplingOverrides = new SaplingOverrides();
-        Boolean replace = false;
+
         for(Map.Entry<ResourceLocation, Resource> entry : resourceManager.listResources(this.directory, (location) -> location.getPath().endsWith(".json")).entrySet()) {
             ResourceLocation resourcelocation = entry.getKey();
             String s = resourcelocation.getPath();
-
+            System.out.println(s);
             String[] parts = s.split("/");
             String namespace = parts[2];
             String saplingName = parts[3].replace(".json","");
@@ -46,7 +47,7 @@ public class SingleTreeDataReloadListener extends SimplePreparableReloadListener
                 try {
                     JsonObject json = GsonHelper.fromJson(this.gson,reader,JsonObject.class);
                     if (json != null) {
-                        replace = json.get("replace").getAsBoolean();
+                        boolean replace = json.get("replace").getAsBoolean();
 
                         Map<String,String> biomeFeatureMap = new HashMap<>();
                         for(Map.Entry<String, JsonElement> jentry: json.get("values").getAsJsonObject().entrySet()){
@@ -55,8 +56,17 @@ public class SingleTreeDataReloadListener extends SimplePreparableReloadListener
 
                             biomeFeatureMap.put(biomeID,featureID);
                         }
+                        if(replace){
+                            saplingOverrides.put(saplingLocation.toString(),biomeFeatureMap);
+                        }else{
+                            Map<String,String> previous = saplingOverrides.getBiomeFeaturesOfSapling(saplingLocation.toString());
+                            if(previous!=null){
+                                previous.putAll(biomeFeatureMap);
+                            }else{
+                                saplingOverrides.put(saplingLocation.toString(),biomeFeatureMap);
+                            }
+                        }
 
-                        saplingOverrides.put(saplingLocation.toString(),biomeFeatureMap);
 
 
                     } else {
@@ -81,10 +91,8 @@ public class SingleTreeDataReloadListener extends SimplePreparableReloadListener
                 LOGGER.error("Couldn't parse data file {} from {}", saplingLocation, resourcelocation, jsonparseexception);
             }
         }
-
         return saplingOverrides;
     }
-
     @Override
     protected void apply(SaplingOverrides data, ResourceManager resourceManager, ProfilerFiller profilerFiller) {
         TreeOverrideFinder.initSingle(data);
