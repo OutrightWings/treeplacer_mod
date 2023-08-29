@@ -1,9 +1,9 @@
 modLoader="javafml"
-loaderVersion="[45,)"
+loaderVersion="[47,)"
 license="MIT"
 [[mods]] #mandatory
 modId="treeplacer"
-version="1.1.2"
+version="1.2.0"
 displayName="TreePlacer"
 displayURL="https://github.com/OutrightWings/treeplacer_mod" #optional
 logoFile="logo.png"
@@ -15,12 +15,12 @@ Saplings can dynamically generate different trees, based on the biome they are g
 [[dependencies.treeplacer]]
     modId="forge"
     mandatory=true
-    versionRange="[45,)"
+    versionRange="[47,)"
     ordering="NONE"
     side="BOTH"
 [[dependencies.treeplacer]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.19.2,1.20)"
+    versionRange="[1.20.1,1.21)"
     ordering="NONE"
     side="BOTH"
