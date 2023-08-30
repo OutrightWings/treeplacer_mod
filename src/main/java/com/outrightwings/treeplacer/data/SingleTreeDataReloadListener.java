@@ -34,7 +34,6 @@ public class SingleTreeDataReloadListener extends SimplePreparableReloadListener
         for(Map.Entry<ResourceLocation, Resource> entry : resourceManager.listResources(this.directory, (location) -> location.getPath().endsWith(".json")).entrySet()) {
             ResourceLocation resourcelocation = entry.getKey();
             String s = resourcelocation.getPath();
-            System.out.println(s);
             String[] parts = s.split("/");
             String namespace = parts[2];
             String saplingName = parts[3].replace(".json","");
