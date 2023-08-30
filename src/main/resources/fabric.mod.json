@@ -1,7 +1,7 @@
 {
 	"schemaVersion": 1,
 	"id": "treeplacer",
-	"version": "1.0.3",
+	"version": "1.2.0",
 	"name": "treeplacer",
 	"description": "Saplings can dynamically generate different trees, based on the biome they are grown in, declared in data files.",
 	"authors": [
@@ -24,7 +24,7 @@
 	],
 	"depends": {
 		"fabricloader": ">=0.14.0",
-		"minecraft": ">=1.19",
+		"minecraft": ">=1.20",
 		"java": ">=17"
 	}
 }
