@@ -25,7 +25,9 @@ public class SaplingOverrides{
         }
         return null;
     }
-
+    public Map<String,String> getBiomeFeaturesOfSapling(String sapling){
+        return overrides.get(sapling);
+    }
     public String toString(){
         StringBuilder str = new StringBuilder();
         for (Map.Entry<String, Map<String, String>> outerEntry : overrides.entrySet()) {
