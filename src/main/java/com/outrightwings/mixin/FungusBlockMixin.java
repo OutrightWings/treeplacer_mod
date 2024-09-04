@@ -20,8 +20,8 @@ public class FungusBlockMixin {
         int placed = TreePlacer.growTree(level,level.getChunkSource().getGenerator(),pos,state,random,false);
         if(placed != -1) cir.cancel();
     }
-    @Inject(at = @At(value = "HEAD"), method = "isValidBonemealTarget(Lnet/minecraft/world/level/LevelReader;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;Z)Z",cancellable = true)
-    private void isValidBonemealTarget(LevelReader levelReader, BlockPos blockPos, BlockState blockState, boolean bl, CallbackInfoReturnable<Boolean> cir){
+    @Inject(at = @At(value = "HEAD"), method = "isValidBonemealTarget(Lnet/minecraft/world/level/LevelReader;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;)Z",cancellable = true)
+    private void isValidBonemealTarget(LevelReader levelReader, BlockPos blockPos, BlockState blockState, CallbackInfoReturnable<Boolean> cir){
         cir.setReturnValue(true);
     }
 }

@@ -20,7 +20,7 @@ import java.awt.Point;
 import java.util.Optional;
 
 public class TreeOverrideFinder {
-    private static final ResourceLocation allBiomes = new ResourceLocation("treeplacer:all_biomes");
+    private static final ResourceLocation allBiomes = ResourceLocation.fromNamespaceAndPath("treeplacer","all_biomes");
     private static SaplingOverrides singleSaplingOverrides;
     private static SaplingOverrides megaSaplingOverrides;
     public static void initSingle(SaplingOverrides overrides){singleSaplingOverrides=overrides;}
@@ -34,7 +34,7 @@ public class TreeOverrideFinder {
         featureID = GetBlockOverride(isMega,sapling,pos,level);
         if(featureID == null) featureID = GetSimpleOverride(isMega,sapling,biome);
         if(featureID == null) featureID = GetDefaultOverride(isMega,sapling);
-
+        System.out.println(featureID);
         return getConfiguredFeature(level,featureID);
     }
     private static String GetSimpleOverride(Tuple<Boolean, Point> isMega, ResourceLocation sapling, ResourceLocation key){
@@ -62,7 +62,8 @@ public class TreeOverrideFinder {
 
     private static Holder<ConfiguredFeature<?, ?>> getConfiguredFeature(ServerLevel level, String feature){
         if(feature == null) return null;
-        ResourceKey<ConfiguredFeature<?, ?>> key = FeatureUtils.createKey(feature);
+        System.out.println(feature);
+        ResourceKey<ConfiguredFeature<?, ?>> key = ResourceKey.create(Registries.CONFIGURED_FEATURE, ResourceLocation.parse(feature));
         return level.registryAccess().registryOrThrow(Registries.CONFIGURED_FEATURE).getHolder(key).orElse(null);
     }
 }

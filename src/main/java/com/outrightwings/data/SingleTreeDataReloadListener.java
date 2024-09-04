@@ -39,7 +39,7 @@ public class SingleTreeDataReloadListener extends SimplePreparableReloadListener
             String namespace = parts[2];
             String saplingName = parts[3].replace(".json","");
 
-            ResourceLocation saplingLocation = new ResourceLocation(namespace, saplingName);
+            ResourceLocation saplingLocation = ResourceLocation.fromNamespaceAndPath(namespace, saplingName);
 
             try {
                 Reader reader = entry.getValue().openAsReader();
@@ -102,6 +102,6 @@ public class SingleTreeDataReloadListener extends SimplePreparableReloadListener
 
     @Override
     public ResourceLocation getFabricId() {
-        return new ResourceLocation("treeplacer:single_tree_data");
+        return ResourceLocation.fromNamespaceAndPath("treeplacer","single_tree_data");
     }
 }

@@ -16,6 +16,6 @@ public class MegaTreeDataReloadListener extends SingleTreeDataReloadListener{
     }
     @Override
     public ResourceLocation getFabricId() {
-        return new ResourceLocation("treeplacer:mega_tree_data");
+        return  ResourceLocation.fromNamespaceAndPath("treeplacer","mega_tree_data");
     }
 }
