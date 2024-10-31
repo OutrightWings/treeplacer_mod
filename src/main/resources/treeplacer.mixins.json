@@ -1,11 +1,10 @@
 {
   "required": true,
   "package": "com.outrightwings.treeplacer.mixin",
-  "compatibilityLevel": "JAVA_17",
+  "compatibilityLevel": "JAVA_21",
   "refmap": "treeplacer.refmap.json",
   "mixins": [
-    "AbstractMegaTreeGrowerMixin",
-    "AbstractTreeGrowerMixin",
+    "TreeGrowerMixin",
     "FungusBlockMixin",
     "MushroomBlockMixin"
   ],
