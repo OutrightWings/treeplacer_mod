@@ -5,3 +5,9 @@
 /datapack enable "file/additional"
 /datapack enable "file/test"
 /reload
+/datapack disable "file/additional"
+/datapack disable "file/test"
+/reload
+/datapack disable "file/additional"
+/datapack disable "file/test"
+/datapack enable "file/test"

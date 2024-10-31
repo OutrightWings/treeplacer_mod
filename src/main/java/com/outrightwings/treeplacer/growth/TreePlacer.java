@@ -39,39 +39,39 @@ public class TreePlacer {
         else return placeSingle(level,chunkGenerator,pos,state,random,holder);
     }
     private static int placeSingle(ServerLevel level, ChunkGenerator chunkGenerator, BlockPos pos, BlockState state, RandomSource random,Holder<ConfiguredFeature<?, ?>> holder){
-
-            ConfiguredFeature<?, ?> configuredFeature = holder.value();
-            BlockState blockstate = level.getFluidState(pos).createLegacyBlock();
-            level.setBlock(pos, blockstate, 4);
-            if (configuredFeature.place(level, chunkGenerator, random, pos)) {
-                if (level.getBlockState(pos) == blockstate) {
-                    level.setBlock(pos, Blocks.AIR.defaultBlockState(), 2);
-                }
-                return 1;
-            } else {
-                level.setBlock(pos, state, 4);
-                return 0;
+        if(holder == null) return -1;
+        ConfiguredFeature<?, ?> configuredFeature = holder.value();
+        BlockState blockstate = level.getFluidState(pos).createLegacyBlock();
+        level.setBlock(pos, blockstate, 4);
+        if (configuredFeature.place(level, chunkGenerator, random, pos)) {
+            if (level.getBlockState(pos) == blockstate) {
+                level.setBlock(pos, Blocks.AIR.defaultBlockState(), 2);
             }
+            return 1;
+        } else {
+            level.setBlock(pos, state, 4);
+            return 0;
+        }
     }
     private static int placeMega(ServerLevel level, ChunkGenerator chunkGenerator, BlockPos pos, BlockState state, RandomSource randomSource, Point point, Holder<ConfiguredFeature<?, ?>> holder) {
-
-            ConfiguredFeature<?, ?> configuredfeature = holder.value();
-            BlockState blockstate = Blocks.AIR.defaultBlockState();
-            int x = point.x;
-            int z = point.y;
-            level.setBlock(pos.offset(x, 0, z), blockstate, 2);
-            level.setBlock(pos.offset(x + 1, 0, z), blockstate, 2);
-            level.setBlock(pos.offset(x, 0, z + 1), blockstate, 2);
-            level.setBlock(pos.offset(x + 1, 0, z + 1), blockstate, 2);
-            if (configuredfeature.place(level, chunkGenerator, randomSource, pos.offset(x, 0, z))) {
-                return 1;
-            } else {
-                level.setBlock(pos.offset(x, 0, z), state, 2);
-                level.setBlock(pos.offset(x + 1, 0, z), state, 2);
-                level.setBlock(pos.offset(x, 0, z + 1), state, 2);
-                level.setBlock(pos.offset(x + 1, 0, z + 1), state, 2);
-                return 0;
-            }
+        if(holder == null) return -1;
+        ConfiguredFeature<?, ?> configuredfeature = holder.value();
+        BlockState blockstate = Blocks.AIR.defaultBlockState();
+        int x = point.x;
+        int z = point.y;
+        level.setBlock(pos.offset(x, 0, z), blockstate, 2);
+        level.setBlock(pos.offset(x + 1, 0, z), blockstate, 2);
+        level.setBlock(pos.offset(x, 0, z + 1), blockstate, 2);
+        level.setBlock(pos.offset(x + 1, 0, z + 1), blockstate, 2);
+        if (configuredfeature.place(level, chunkGenerator, randomSource, pos.offset(x, 0, z))) {
+            return 1;
+        } else {
+            level.setBlock(pos.offset(x, 0, z), state, 2);
+            level.setBlock(pos.offset(x + 1, 0, z), state, 2);
+            level.setBlock(pos.offset(x, 0, z + 1), state, 2);
+            level.setBlock(pos.offset(x + 1, 0, z + 1), state, 2);
+            return 0;
+        }
 
     }
     //Took AbstractMegaTreeGrower's function and made it more readable + combined
