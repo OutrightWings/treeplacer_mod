@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(MushroomBlock.class)
 public class MushroomBlockMixin {
-    @Inject(at = @At(value = "HEAD"), method = "growMushroom(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/util/RandomSource;)Z",cancellable = true)
+    @Inject(at = @At(value = "HEAD"), method = "growMushroom(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/util/RandomSource;)Z",cancellable = true,remap = false)
     private void growMushroom(ServerLevel level, BlockPos pos, BlockState state, RandomSource random, CallbackInfoReturnable<Boolean> cir){
         int placed = TreePlacer.growTree(level,level.getChunkSource().getGenerator(),pos,state,random,false);
         if(placed != -1) cir.setReturnValue(placed == 1);

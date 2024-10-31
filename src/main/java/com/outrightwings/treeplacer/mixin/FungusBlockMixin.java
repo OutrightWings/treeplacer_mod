@@ -16,13 +16,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(FungusBlock.class)
 public class FungusBlockMixin {
-    @Inject(at = @At(value = "HEAD"), method = "performBonemeal(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/util/RandomSource;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;)V",cancellable = true)
+    @Inject(at = @At(value = "HEAD"), method = "performBonemeal(Lnet/minecraft/server/level/ServerLevel;Lnet/minecraft/util/RandomSource;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;)V",cancellable = true,remap = false)
     private void performBonemeal(ServerLevel level, RandomSource random, BlockPos pos, BlockState state, CallbackInfo cir){
         int placed = TreePlacer.growTree(level,level.getChunkSource().getGenerator(),pos,state,random,false);
         if(placed != -1) cir.cancel();
     }
-    @Inject(at = @At(value = "HEAD"), method = "isValidBonemealTarget(Lnet/minecraft/world/level/LevelReader;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;Z)Z",cancellable = true)
-    private void isValidBonemealTarget(LevelReader p_256655_, BlockPos p_256553_, BlockState p_256213_, boolean p_256270_, CallbackInfoReturnable<Boolean> cir){
+    @Inject(at = @At(value = "HEAD"), method = "isValidBonemealTarget(Lnet/minecraft/world/level/LevelReader;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;)Z",cancellable = true,remap = false)
+    private void isValidBonemealTarget(LevelReader p_256655_, BlockPos p_256553_, BlockState p_256213_, CallbackInfoReturnable<Boolean> cir){
         cir.setReturnValue(true);
     }
 }

@@ -1,0 +1,7 @@
+/datapack list
+/datapack enable "mod/treeplacer"
+/datapack disable "file/test"
+/datapack disable "file/additional"
+/datapack enable "file/additional"
+/datapack enable "file/test"
+/reload

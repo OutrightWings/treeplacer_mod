@@ -4,6 +4,7 @@ import com.outrightwings.treeplacer.data.SaplingOverrides;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.features.FeatureUtils;
 import net.minecraft.resources.ResourceKey;
@@ -12,22 +13,21 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
-import net.minecraftforge.registries.ForgeRegistries;
 
 import java.awt.*;
 import java.util.Optional;
 
 public class TreeOverrideFinder {
-    private static final ResourceLocation allBiomes = new ResourceLocation("treeplacer:all_biomes");
+    private static final ResourceLocation allBiomes = ResourceLocation.parse("treeplacer:all_biomes");
     private static SaplingOverrides singleSaplingOverrides;
     private static SaplingOverrides megaSaplingOverrides;
     public static void initSingle(SaplingOverrides overrides){singleSaplingOverrides=overrides;}
     public static void initMega(SaplingOverrides overrides){megaSaplingOverrides=overrides;}
 
     public static Holder<ConfiguredFeature<?, ?>> GetSaplingOverride(ServerLevel level, BlockState state, BlockPos pos, Tuple<Boolean, Point> isMega){
-        ResourceLocation sapling = ForgeRegistries.BLOCKS.getKey(state.getBlock());
+        ResourceLocation sapling = BuiltInRegistries.BLOCK.getKey(state.getBlock());
         ResourceLocation biome = getResourceLocationFromHolder(level.getBiome(pos));
-        //System.out.println(sapling + " " + biome + " " + pos);
+        System.out.println(sapling + " " + biome + " " + pos);
         String featureID;
         featureID = GetBlockOverride(isMega,sapling,pos,level);
         if(featureID == null) featureID = GetSimpleOverride(isMega,sapling,biome);
@@ -60,7 +60,7 @@ public class TreeOverrideFinder {
 
     private static Holder<ConfiguredFeature<?, ?>> getConfiguredFeature(ServerLevel level, String feature){
         if(feature == null) return null;
-        ResourceKey<ConfiguredFeature<?, ?>> key = FeatureUtils.createKey(feature);
+        ResourceKey<ConfiguredFeature<?, ?>> key = ResourceKey.create(Registries.CONFIGURED_FEATURE, ResourceLocation.parse(feature));
         return level.registryAccess().registryOrThrow(Registries.CONFIGURED_FEATURE).getHolder(key).orElse(null);
     }
 }
