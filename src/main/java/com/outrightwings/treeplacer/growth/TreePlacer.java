@@ -5,11 +5,8 @@ import net.minecraft.core.Holder;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.Tuple;
-import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.grower.AbstractMegaTreeGrower;
-import net.minecraft.world.level.block.grower.AbstractTreeGrower;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
@@ -42,47 +39,40 @@ public class TreePlacer {
         else return placeSingle(level,chunkGenerator,pos,state,random,holder);
     }
     private static int placeSingle(ServerLevel level, ChunkGenerator chunkGenerator, BlockPos pos, BlockState state, RandomSource random,Holder<ConfiguredFeature<?, ?>> holder){
-        net.minecraftforge.event.level.SaplingGrowTreeEvent event = net.minecraftforge.event.ForgeEventFactory.blockGrowFeature(level, random, pos, holder);
-        if (event.getResult().equals(net.minecraftforge.eventbus.api.Event.Result.DENY) || event.getFeature() == null) {
-            return -1;
-        } else {
-            ConfiguredFeature<?, ?> configuredFeature = event.getFeature().value();
-            BlockState blockstate = level.getFluidState(pos).createLegacyBlock();
-            level.setBlock(pos, blockstate, 4);
-            if (configuredFeature.place(level, chunkGenerator, random, pos)) {
-                if (level.getBlockState(pos) == blockstate) {
-                    level.setBlock(pos, Blocks.AIR.defaultBlockState(), 2);
-                }
-                return 1;
-            } else {
-                level.setBlock(pos, state, 4);
-                return 0;
+        if(holder == null) return -1;
+        ConfiguredFeature<?, ?> configuredFeature = holder.value();
+        BlockState blockstate = level.getFluidState(pos).createLegacyBlock();
+        level.setBlock(pos, blockstate, 4);
+        if (configuredFeature.place(level, chunkGenerator, random, pos)) {
+            if (level.getBlockState(pos) == blockstate) {
+                level.setBlock(pos, Blocks.AIR.defaultBlockState(), 2);
             }
+            return 1;
+        } else {
+            level.setBlock(pos, state, 4);
+            return 0;
         }
     }
     private static int placeMega(ServerLevel level, ChunkGenerator chunkGenerator, BlockPos pos, BlockState state, RandomSource randomSource, Point point, Holder<ConfiguredFeature<?, ?>> holder) {
-        net.minecraftforge.event.level.SaplingGrowTreeEvent event = net.minecraftforge.event.ForgeEventFactory.blockGrowFeature(level, randomSource, pos, holder);
-        if (event.getResult().equals(net.minecraftforge.eventbus.api.Event.Result.DENY) || event.getFeature() == null) {
-            return -1;
+        if(holder == null) return -1;
+        ConfiguredFeature<?, ?> configuredfeature = holder.value();
+        BlockState blockstate = Blocks.AIR.defaultBlockState();
+        int x = point.x;
+        int z = point.y;
+        level.setBlock(pos.offset(x, 0, z), blockstate, 2);
+        level.setBlock(pos.offset(x + 1, 0, z), blockstate, 2);
+        level.setBlock(pos.offset(x, 0, z + 1), blockstate, 2);
+        level.setBlock(pos.offset(x + 1, 0, z + 1), blockstate, 2);
+        if (configuredfeature.place(level, chunkGenerator, randomSource, pos.offset(x, 0, z))) {
+            return 1;
         } else {
-            ConfiguredFeature<?, ?> configuredfeature = event.getFeature().value();
-            BlockState blockstate = Blocks.AIR.defaultBlockState();
-            int x = point.x;
-            int z = point.y;
-            level.setBlock(pos.offset(x, 0, z), blockstate, 2);
-            level.setBlock(pos.offset(x + 1, 0, z), blockstate, 2);
-            level.setBlock(pos.offset(x, 0, z + 1), blockstate, 2);
-            level.setBlock(pos.offset(x + 1, 0, z + 1), blockstate, 2);
-            if (configuredfeature.place(level, chunkGenerator, randomSource, pos.offset(x, 0, z))) {
-                return 1;
-            } else {
-                level.setBlock(pos.offset(x, 0, z), state, 2);
-                level.setBlock(pos.offset(x + 1, 0, z), state, 2);
-                level.setBlock(pos.offset(x, 0, z + 1), state, 2);
-                level.setBlock(pos.offset(x + 1, 0, z + 1), state, 2);
-                return 0;
-            }
+            level.setBlock(pos.offset(x, 0, z), state, 2);
+            level.setBlock(pos.offset(x + 1, 0, z), state, 2);
+            level.setBlock(pos.offset(x, 0, z + 1), state, 2);
+            level.setBlock(pos.offset(x + 1, 0, z + 1), state, 2);
+            return 0;
         }
+
     }
     //Took AbstractMegaTreeGrower's function and made it more readable + combined
     public static Tuple<Boolean, Point> isTwobyTwo(ServerLevel level, BlockPos pos, BlockState state){
