@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -49,17 +50,36 @@ public class SingleTreeDataReloadListener extends SimplePreparableReloadListener
                     if (json != null) {
                         boolean replace = json.get("replace").getAsBoolean();
 
-                        Map<String,String> biomeFeatureMap = new HashMap<>();
+                        Map<String,FeatureData> biomeFeatureMap = new HashMap<>();
                         for(Map.Entry<String, JsonElement> jentry: json.get("values").getAsJsonObject().entrySet()){
+                            ArrayList<String> features = new ArrayList<>();
+                            ArrayList<Integer> weights = new ArrayList<>();
                             String biomeID = jentry.getKey();
-                            String featureID = jentry.getValue().getAsString();
+                            JsonElement value = jentry.getValue();
 
-                            biomeFeatureMap.put(biomeID,featureID);
+                            //If multi entry
+                            if(value.isJsonArray()){
+                                JsonArray jsonArray = value.getAsJsonArray();
+                                for(JsonElement element : jsonArray){
+                                    JsonObject object = element.getAsJsonObject();
+                                    features.add(object.get("feature").getAsString());
+                                    weights.add(object.get("weight").getAsInt());
+                                }
+                            }
+                            //If single entry
+                            else if(value.isJsonPrimitive()){
+                                features.add(jentry.getValue().getAsString());
+                                weights.add(1);
+                            }
+
+                            //Put into map
+                            FeatureData data = new FeatureData(features,weights);
+                            biomeFeatureMap.put(biomeID,data);
                         }
                         if(replace){
                             saplingOverrides.put(saplingLocation.toString(),biomeFeatureMap);
                         }else{
-                            Map<String,String> previous = saplingOverrides.getBiomeFeaturesOfSapling(saplingLocation.toString());
+                            Map<String,FeatureData> previous = saplingOverrides.getBiomeFeaturesOfSapling(saplingLocation.toString());
                             if(previous!=null){
                                 previous.putAll(biomeFeatureMap);
                             }else{
