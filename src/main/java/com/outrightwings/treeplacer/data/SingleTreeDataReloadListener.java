@@ -39,7 +39,7 @@ public class SingleTreeDataReloadListener extends SimplePreparableReloadListener
             String namespace = parts[2];
             String saplingName = parts[3].replace(".json","");
 
-            ResourceLocation saplingLocation = new ResourceLocation(namespace, saplingName);
+            ResourceLocation saplingLocation = new ResourceLocation(namespace,saplingName);
 
             try {
                 Reader reader = entry.getValue().openAsReader();
