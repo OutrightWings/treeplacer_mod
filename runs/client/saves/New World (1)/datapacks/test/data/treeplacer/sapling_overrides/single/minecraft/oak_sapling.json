@@ -1,8 +1,0 @@
-{
-    "replace": false,
-    "values": {
-        "treeplacer:all_biomes":"minecraft:birch",
-        "minecraft:plains":"minecraft:spruce",
-        "minecraft:grass_block":"minecraft:acacia"
-    }
-}
