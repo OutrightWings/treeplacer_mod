@@ -7,14 +7,14 @@ public class FabricDataReloaders {
     public static class FabricSingleTreeDataReloadListener extends SingleTreeDataReloadListener implements IdentifiableResourceReloadListener{
         @Override
         public ResourceLocation getFabricId() {
-            return new ResourceLocation("treeplacer:single_tree_data");
+            return ResourceLocation.fromNamespaceAndPath("treeplacer","single_tree_data");
         }
     }
 
     public static class FabricMegaTreeDataReloadListener extends MegaTreeDataReloadListener implements IdentifiableResourceReloadListener{
         @Override
         public ResourceLocation getFabricId() {
-            return new ResourceLocation("treeplacer:mega_tree_data");
+            return ResourceLocation.fromNamespaceAndPath("treeplacer","mega_tree_data");
         }
     }
 }

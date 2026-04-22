@@ -7,8 +7,7 @@
     "mixins": [
     ],
     "client": [
-        "AbstractTreeGrowerMixin",
-        "AbstractMegaTreeGrowerMixin",
+        "TreeGrowerMixin",
         "FungusBlockMixin",
         "MushroomBlockMixin"
     ],
