@@ -3,7 +3,7 @@ package com.outrightwings.data;
 import com.google.gson.*;
 import com.mojang.logging.LogUtils;
 import com.outrightwings.growth.TreeOverrideFinder;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
@@ -30,14 +30,14 @@ public class SingleTreeDataReloadListener extends SimplePreparableReloadListener
     protected SaplingOverrides prepare(ResourceManager resourceManager, ProfilerFiller profilerFiller) {
         SaplingOverrides saplingOverrides = new SaplingOverrides();
 
-        for(Map.Entry<ResourceLocation, Resource> entry : resourceManager.listResources(this.directory, (location) -> location.getPath().endsWith(".json")).entrySet()) {
-            ResourceLocation resourcelocation = entry.getKey();
+        for(Map.Entry<Identifier, Resource> entry : resourceManager.listResources(this.directory, (location) -> location.getPath().endsWith(".json")).entrySet()) {
+            Identifier resourcelocation = entry.getKey();
             String s = resourcelocation.getPath();
             String[] parts = s.split("/");
             String namespace = parts[2];
             String saplingName = parts[3].replace(".json","");
 
-            ResourceLocation saplingLocation = ResourceLocation.fromNamespaceAndPath(namespace, saplingName);
+            Identifier saplingLocation = Identifier.fromNamespaceAndPath(namespace, saplingName);
 
             try {
                 Reader reader = entry.getValue().openAsReader();

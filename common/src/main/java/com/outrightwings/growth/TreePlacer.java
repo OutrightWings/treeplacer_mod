@@ -16,7 +16,6 @@ import java.awt.Point;
 public class TreePlacer {
     public static int growTree(ServerLevel level, ChunkGenerator chunkGenerator, BlockPos pos, BlockState state, RandomSource random,boolean isAbstractMegaGrower){
         Tuple<Boolean, Point> isMega = isTwobyTwo(level,pos,state);
-
         int attempt;
         if(isMega.getA()){
             //try mega

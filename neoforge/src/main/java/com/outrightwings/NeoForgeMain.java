@@ -2,11 +2,12 @@ package com.outrightwings;
 
 import com.outrightwings.data.MegaTreeDataReloadListener;
 import com.outrightwings.data.SingleTreeDataReloadListener;
+import net.minecraft.resources.Identifier;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.event.AddReloadListenerEvent;
+import net.neoforged.neoforge.event.AddServerReloadListenersEvent;
 
 @Mod(Constants.MOD_ID)
 public class NeoForgeMain {
@@ -17,8 +18,8 @@ public class NeoForgeMain {
         NeoForge.EVENT_BUS.register(this);
     }
     @SubscribeEvent
-    public void onResourceReload(final AddReloadListenerEvent event){
-        event.addListener(new SingleTreeDataReloadListener());
-        event.addListener(new MegaTreeDataReloadListener());
+    public void onResourceReload(final AddServerReloadListenersEvent event){
+        event.addListener(Identifier.fromNamespaceAndPath(Constants.MOD_ID,"single_tree_data"),new SingleTreeDataReloadListener());
+        event.addListener(Identifier.fromNamespaceAndPath(Constants.MOD_ID,"mega_tree_data"),new MegaTreeDataReloadListener());
     }
 }

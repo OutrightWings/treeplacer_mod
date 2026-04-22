@@ -12,6 +12,7 @@ public class FabricMain implements ModInitializer {
     @Override
     public void onInitialize() {
         CommonMain.init();
+
         ResourceManagerHelper.get(PackType.SERVER_DATA).registerReloadListener(new FabricDataReloaders.FabricSingleTreeDataReloadListener());
         ResourceManagerHelper.get(PackType.SERVER_DATA).registerReloadListener(new FabricDataReloaders.FabricMegaTreeDataReloadListener());
     }

@@ -1,7 +1,6 @@
 package com.outrightwings.data;
 
 import com.outrightwings.growth.TreeOverrideFinder;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.profiling.ProfilerFiller;
 
