@@ -3,19 +3,19 @@ package com.outrightwings.data;
 import com.google.gson.*;
 import com.mojang.logging.LogUtils;
 import com.outrightwings.growth.TreeOverrideFinder;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.util.profiling.ProfilerFiller;
-import org.slf4j.Logger;
 
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import org.slf4j.Logger;
 
 public class SingleTreeDataReloadListener extends SimplePreparableReloadListener<SaplingOverrides> {
     protected String directory;
@@ -30,14 +30,14 @@ public class SingleTreeDataReloadListener extends SimplePreparableReloadListener
     protected SaplingOverrides prepare(ResourceManager resourceManager, ProfilerFiller profilerFiller) {
         SaplingOverrides saplingOverrides = new SaplingOverrides();
 
-        for(Map.Entry<Identifier, Resource> entry : resourceManager.listResources(this.directory, (location) -> location.getPath().endsWith(".json")).entrySet()) {
-            Identifier resourcelocation = entry.getKey();
+        for(Map.Entry<ResourceLocation, Resource> entry : resourceManager.listResources(this.directory, (location) -> location.getPath().endsWith(".json")).entrySet()) {
+            ResourceLocation resourcelocation = entry.getKey();
             String s = resourcelocation.getPath();
             String[] parts = s.split("/");
             String namespace = parts[2];
             String saplingName = parts[3].replace(".json","");
 
-            Identifier saplingLocation = Identifier.fromNamespaceAndPath(namespace, saplingName);
+            ResourceLocation saplingLocation = ResourceLocation.fromNamespaceAndPath(namespace, saplingName);
 
             try {
                 Reader reader = entry.getValue().openAsReader();
