@@ -22,7 +22,7 @@ public class FabricMain implements ModInitializer {
         ResourceManagerHelper.get(PackType.SERVER_DATA).registerReloadListener(new FabricDataReloaders.FabricMegaTreeDataReloadListener());
 
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) ->
-                dispatcher.register(literal("list_treeplacements")
+                dispatcher.register(literal(ListCommand.NAME)
                 .executes(ListCommand::runCommand)));
     }
 }

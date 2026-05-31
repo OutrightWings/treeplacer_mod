@@ -1,5 +1,6 @@
 package com.outrightwings;
 
+import com.outrightwings.command.ListCommand;
 import com.outrightwings.data.MegaTreeDataReloadListener;
 import com.outrightwings.data.SingleTreeDataReloadListener;
 import net.minecraft.resources.Identifier;
@@ -8,6 +9,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.AddServerReloadListenersEvent;
+import net.neoforged.neoforge.event.RegisterCommandsEvent;
 
 @Mod(Constants.MOD_ID)
 public class NeoForgeMain {

@@ -6,6 +6,8 @@ import com.outrightwings.growth.TreeOverrideFinder;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.permissions.PermissionSet;
+import net.minecraft.server.permissions.Permissions;
 
 public class ListCommand {
     public static final String NAME = "list_treeplacements";
@@ -13,8 +15,7 @@ public class ListCommand {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(
                 Commands.literal(NAME)
-                        .requires(source -> source.hasPermission(2)) // 2 = OP required
-                        .executes(ListCommand::runCommand)
+                .executes(ListCommand::runCommand)
         );
     }
 
