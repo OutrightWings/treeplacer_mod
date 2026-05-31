@@ -10,6 +10,8 @@ import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.packs.PackType;
 
+import java.util.List;
+
 import static net.minecraft.commands.Commands.literal;
 
 public class FabricMain implements ModInitializer {
@@ -22,7 +24,7 @@ public class FabricMain implements ModInitializer {
         ResourceManagerHelper.get(PackType.SERVER_DATA).registerReloadListener(new FabricDataReloaders.FabricMegaTreeDataReloadListener());
 
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) ->
-                dispatcher.register(literal("list_treeplacements")
+                dispatcher.register(literal(ListCommand.NAME)
                 .executes(ListCommand::runCommand)));
     }
 }
