@@ -22,4 +22,8 @@ public class NeoForgeMain {
         event.addListener(Identifier.fromNamespaceAndPath(Constants.MOD_ID,"single_tree_data"),new SingleTreeDataReloadListener());
         event.addListener(Identifier.fromNamespaceAndPath(Constants.MOD_ID,"mega_tree_data"),new MegaTreeDataReloadListener());
     }
+    @SubscribeEvent
+    private void registerCommands(RegisterCommandsEvent event) {
+        ListCommand.register(event.getDispatcher());
+    }
 }
