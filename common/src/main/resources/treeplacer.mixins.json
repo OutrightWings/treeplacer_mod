@@ -5,12 +5,13 @@
     "refmap": "${mod_id}.refmap.json",
     "compatibilityLevel": "JAVA_17",
     "mixins": [
-    ],
-    "client": [
         "AbstractTreeGrowerMixin",
         "AbstractMegaTreeGrowerMixin",
         "FungusBlockMixin",
         "MushroomBlockMixin"
+    ],
+    "client": [
+
     ],
     "server": [
     ],
