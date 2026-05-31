@@ -36,7 +36,7 @@ public class SaplingOverrides{
             for (Map.Entry<String, FeatureData> innerEntry : outerEntry.getValue().entrySet()) {
                 String innerKey = innerEntry.getKey();
                 String innerValue = innerEntry.getValue().toString();
-                str.append("\t").append(innerKey).append(" : ").append(innerValue).append("\n");
+                str.append("     ").append(innerKey).append(" : ").append(innerValue).append("\n");
             }
             str.append("}\n");
         }

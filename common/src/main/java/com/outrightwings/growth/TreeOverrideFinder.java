@@ -21,8 +21,8 @@ import java.util.Optional;
 
 public class TreeOverrideFinder {
     private static final ResourceLocation allBiomes = ResourceLocation.fromNamespaceAndPath("treeplacer","all_biomes");
-    private static SaplingOverrides singleSaplingOverrides;
-    private static SaplingOverrides megaSaplingOverrides;
+    public static SaplingOverrides singleSaplingOverrides;
+    public static SaplingOverrides megaSaplingOverrides;
     public static void initSingle(SaplingOverrides overrides){singleSaplingOverrides=overrides;}
     public static void initMega(SaplingOverrides overrides){megaSaplingOverrides=overrides;}
 
