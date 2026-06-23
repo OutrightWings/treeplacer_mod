@@ -21,7 +21,7 @@ public class SaplingOverrides{
         if(overrides.containsKey(saplingID.toString())){
             Map<String,FeatureData> biomeFeatureMap = overrides.get(saplingID.toString());
             if(biomeFeatureMap.containsKey(biomeID.toString())){
-                return biomeFeatureMap.get(biomeID.toString()).getFeature();
+                return biomeFeatureMap.get(biomeID.toString()).getFeature(pos,weird,block);
             }
         }
         return null;
