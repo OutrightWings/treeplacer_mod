@@ -7,7 +7,6 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.util.Tuple;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.DensityFunction;
@@ -24,7 +23,7 @@ public class TreeOverrideFinder {
     public static void initSingle(SaplingOverrides overrides){singleSaplingOverrides=overrides;}
     public static void initMega(SaplingOverrides overrides){megaSaplingOverrides=overrides;}
 
-    public static Holder<? extends ConfiguredFeature<?, ?>> GetSaplingOverride(ServerLevel level, BlockState state, BlockPos pos, Tuple<Boolean, Point> isMega){
+    public static Holder<? extends ConfiguredFeature<?, ?>> GetSaplingOverride(ServerLevel level, BlockState state, BlockPos pos, Tuple isMega){
         Identifier sapling = BuiltInRegistries.BLOCK.getKey(state.getBlock());
         Identifier biome = getResourceLocationFromHolder(level.getBiome(pos));
         BlockPos groundPos = pos.below();
@@ -39,13 +38,13 @@ public class TreeOverrideFinder {
 
         return getConfiguredFeature(level,featureID);
     }
-    private static String GetSimpleOverride(Tuple<Boolean, Point> isMega, Identifier sapling, Identifier key, BlockPos pos, Boolean weird, String block){
-        return isMega.getA() ? megaSaplingOverrides.getFeatureID(sapling,key, pos, weird, block) :
+    private static String GetSimpleOverride(Tuple isMega, Identifier sapling, Identifier key, BlockPos pos, Boolean weird, String block){
+        return isMega.bool() ? megaSaplingOverrides.getFeatureID(sapling,key, pos, weird, block) :
                 singleSaplingOverrides.getFeatureID(sapling,key, pos, weird, block) ;
     }
-    private static String GetBlockOverride(Tuple<Boolean, Point> isMega, Identifier sapling, BlockPos pos, BlockState groundState, boolean weird, Identifier groundBlock, ServerLevel level){
-        if(isMega.getA()){
-            boolean groundAllSame = TreePlacer.isAllSame(level,pos,groundState,isMega.getB());
+    private static String GetBlockOverride(Tuple isMega, Identifier sapling, BlockPos pos, BlockState groundState, boolean weird, Identifier groundBlock, ServerLevel level){
+        if(isMega.bool()){
+            boolean groundAllSame = TreePlacer.isAllSame(level,pos,groundState,isMega.point());
             if(!groundAllSame) return null;
         }
         return GetSimpleOverride(isMega,sapling,groundBlock,pos,weird,groundBlock.toString());
@@ -70,4 +69,5 @@ public class TreeOverrideFinder {
         ResourceKey<ConfiguredFeature<?, ?>> key = ResourceKey.create(Registries.CONFIGURED_FEATURE, Identifier.parse(feature));
         return level.registryAccess().getOrThrow(key);
     }
+    public record Tuple(Boolean bool, Point point){}
 }

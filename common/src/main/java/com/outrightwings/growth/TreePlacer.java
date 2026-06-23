@@ -4,36 +4,34 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
-import net.minecraft.util.Tuple;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
-
 import java.awt.Point;
 
 public class TreePlacer {
     public static int growTree(ServerLevel level, ChunkGenerator chunkGenerator, BlockPos pos, BlockState state, RandomSource random,boolean isAbstractMegaGrower){
-        Tuple<Boolean, Point> isMega = isTwobyTwo(level,pos,state);
+        TreeOverrideFinder.Tuple isMega = isTwobyTwo(level,pos,state);
         int attempt;
-        if(isMega.getA()){
+        if(isMega.bool()){
             //try mega
             attempt = attemptOverride(level,chunkGenerator,pos,state,random,isMega);
             if(isAbstractMegaGrower|| attempt != -1) return attempt;
-            isMega.setA(false);
+            isMega = new TreeOverrideFinder.Tuple(false,isMega.point());
         }
         //Try single
         attempt = attemptOverride(level,chunkGenerator,pos,state,random,isMega);
         return attempt;
     }
-    private static int attemptOverride(ServerLevel level, ChunkGenerator chunkGenerator, BlockPos pos, BlockState state, RandomSource random,Tuple<Boolean, Point> isMega){
+    private static int attemptOverride(ServerLevel level, ChunkGenerator chunkGenerator, BlockPos pos, BlockState state, RandomSource random,TreeOverrideFinder.Tuple isMega){
         Holder<? extends ConfiguredFeature<?, ?>> holder;
         holder = TreeOverrideFinder.GetSaplingOverride(level,state,pos,isMega);
         return placeTree(level,chunkGenerator,pos,state,random,holder,isMega);
     }
-    private static int placeTree(ServerLevel level, ChunkGenerator chunkGenerator, BlockPos pos, BlockState state, RandomSource random,Holder<? extends ConfiguredFeature<?, ?>> holder,Tuple<Boolean, Point> isMega){
-        if(isMega.getA()) return placeMega(level,chunkGenerator,pos,state,random,isMega.getB(),holder);
+    private static int placeTree(ServerLevel level, ChunkGenerator chunkGenerator, BlockPos pos, BlockState state, RandomSource random,Holder<? extends ConfiguredFeature<?, ?>> holder,TreeOverrideFinder.Tuple isMega){
+        if(isMega.bool()) return placeMega(level,chunkGenerator,pos,state,random,isMega.point(),holder);
         else return placeSingle(level,chunkGenerator,pos,state,random,holder);
     }
     private static int placeSingle(ServerLevel level, ChunkGenerator chunkGenerator, BlockPos pos, BlockState state, RandomSource random,Holder<? extends ConfiguredFeature<?, ?>> holder){
@@ -74,16 +72,16 @@ public class TreePlacer {
 
     }
     //Took AbstractMegaTreeGrower's function and made it more readable + combined
-    public static Tuple<Boolean, Point> isTwobyTwo(ServerLevel level, BlockPos pos, BlockState state){
+    public static TreeOverrideFinder.Tuple isTwobyTwo(ServerLevel level, BlockPos pos, BlockState state){
         for(int i = 0; i >= -1; --i) {
             for(int j = 0; j >= -1; --j) {
                 boolean allSame = isAllSame(level,pos,state,new Point(i,j));
                 if (allSame) {
-                    return new Tuple<>(true,new Point(i,j));
+                    return new TreeOverrideFinder.Tuple(true,new Point(i,j));
                 }
             }
         }
-        return new Tuple<>(false,null);
+        return new TreeOverrideFinder.Tuple(false,null);
     }
     public static boolean isAllSame(ServerLevel level, BlockPos pos, BlockState state,Point point){
         int x = point.x;
