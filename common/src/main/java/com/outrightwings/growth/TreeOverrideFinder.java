@@ -14,6 +14,10 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.chunk.ChunkGenerator;
+import net.minecraft.world.level.levelgen.DensityFunction;
+import net.minecraft.world.level.levelgen.NoiseRouter;
+import net.minecraft.world.level.levelgen.RandomState;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 
 import java.awt.Point;
@@ -29,35 +33,41 @@ public class TreeOverrideFinder {
     public static Holder<? extends ConfiguredFeature<?, ?>> GetSaplingOverride(ServerLevel level, BlockState state, BlockPos pos, Tuple<Boolean, Point> isMega){
         ResourceLocation sapling = getResourceLocationFromHolder(state.getBlockHolder());
         ResourceLocation biome = getResourceLocationFromHolder(level.getBiome(pos));
-        //System.out.println(sapling + " " + biome + " " + pos);
-        String featureID;
-        featureID = GetBlockOverride(isMega,sapling,pos,level);
-        if(featureID == null) featureID = GetSimpleOverride(isMega,sapling,biome);
-        if(featureID == null) featureID = GetDefaultOverride(isMega,sapling);
-        //System.out.println(featureID);
-        return getConfiguredFeature(level,featureID);
-    }
-    private static String GetSimpleOverride(Tuple<Boolean, Point> isMega, ResourceLocation sapling, ResourceLocation key){
-        return isMega.getA() ? megaSaplingOverrides.getFeatureID(sapling,key) :
-                singleSaplingOverrides.getFeatureID(sapling,key) ;
-    }
-    private static String GetBlockOverride(Tuple<Boolean, Point> isMega, ResourceLocation sapling, BlockPos pos, ServerLevel level){
         BlockPos groundPos = pos.below();
         BlockState groundState = level.getBlockState(groundPos);
         ResourceLocation groundBlock = getResourceLocationFromHolder(groundState.getBlockHolder());
+        Boolean weird = getWeirdness(level,pos);
+
+        String featureID;
+        featureID = GetBlockOverride(isMega,sapling,pos,groundState,weird,groundBlock,level);
+        if(featureID == null) featureID = GetSimpleOverride(isMega,sapling,biome,pos,weird,groundBlock.toString());
+        if(featureID == null) featureID = GetSimpleOverride(isMega,sapling,allBiomes,pos,weird,groundBlock.toString());
+
+        return getConfiguredFeature(level,featureID);
+    }
+    private static String GetSimpleOverride(Tuple<Boolean, Point> isMega, ResourceLocation sapling, ResourceLocation key, BlockPos pos, Boolean weird, String block){
+        return isMega.getA() ? megaSaplingOverrides.getFeatureID(sapling,key, pos, weird, block) :
+                singleSaplingOverrides.getFeatureID(sapling,key, pos, weird, block) ;
+    }
+    private static String GetBlockOverride(Tuple<Boolean, Point> isMega, ResourceLocation sapling, BlockPos pos, BlockState groundState, boolean weird, ResourceLocation groundBlock, ServerLevel level){
         if(isMega.getA()){
-            boolean groundAllSame = TreePlacer.isAllSame(level,groundPos,groundState,isMega.getB());
+            boolean groundAllSame = TreePlacer.isAllSame(level,pos,groundState,isMega.getB());
             if(!groundAllSame) return null;
         }
-        return GetSimpleOverride(isMega,sapling,groundBlock);
-    }
-    private static String GetDefaultOverride(Tuple<Boolean, Point> isMega, ResourceLocation sapling){
-        return GetSimpleOverride(isMega,sapling,allBiomes);
+        return GetSimpleOverride(isMega,sapling,groundBlock,pos,weird,groundBlock.toString());
     }
 
     //Stole and modified DebugScreen's method
     private static ResourceLocation getResourceLocationFromHolder(Holder<?> holder) {
         return holder.unwrap().map(ResourceKey::location, (empty) -> null);
+    }
+    private static Boolean getWeirdness(ServerLevel level, BlockPos pos){
+        ChunkGenerator gen = level.getChunkSource().getGenerator();
+        RandomState randomstate = level.getChunkSource().randomState();
+        NoiseRouter noiserouter = randomstate.router();
+        DensityFunction.SinglePointContext densityfunction$singlepointcontext = new DensityFunction.SinglePointContext(pos.getX(), pos.getY(), pos.getZ());
+        double weirdness = noiserouter.ridges().compute(densityfunction$singlepointcontext);
+        return weirdness > 0;
     }
 
     private static Holder<ConfiguredFeature<?, ?>> getConfiguredFeature(ServerLevel level, String feature){
