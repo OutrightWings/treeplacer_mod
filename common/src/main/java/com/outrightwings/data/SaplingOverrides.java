@@ -1,6 +1,7 @@
 package com.outrightwings.data;
 
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.resources.Identifier;
 
 import java.util.HashMap;
@@ -17,7 +18,7 @@ public class SaplingOverrides{
         overrides.put(sapling,biomeFeature);
     }
 
-    public String getFeatureID(Identifier saplingID, Identifier biomeID){
+    public String getFeatureID(Identifier saplingID, Identifier biomeID, BlockPos pos, boolean weird, String block){
         if(overrides.containsKey(saplingID.toString())){
             Map<String,FeatureData> biomeFeatureMap = overrides.get(saplingID.toString());
             if(biomeFeatureMap.containsKey(biomeID.toString())){
