@@ -1,22 +1,59 @@
 package com.outrightwings.data;
 
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.block.state.BlockState;
+
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
 
-public record FeatureData(ArrayList<String> features, ArrayList<Integer> weights) {
-    String getFeature(){
-        int totalWeight = 0;
-        for(int i : weights){
-            totalWeight += i;
-        }
-        int random = new Random().nextInt(totalWeight);
-        int cumulative = 0;
-        for(int i = 0; i < weights.size(); i++){
-            cumulative += weights.get(i);
-            if(cumulative > random){
-                return features.get(i);
+public record FeatureData(ArrayList<String> features, ArrayList<Integer> weights, ArrayList<FeatureBounds> bounds, ArrayList<String> blocks) {
+    String getFeature(BlockPos pos, boolean weird, String block){
+        //Get indexes of features in bounds
+        ArrayList<Integer> valid = new ArrayList<>();
+        for(int i = 0; i < bounds.size(); i++){
+            //Skip if not right block
+            if(!blocks.get(i).isEmpty() && !blocks.get(i).contains(block)){
+                continue;
+            }
+            //Add indexes with matching bounds
+            if(bounds.get(i).inBounds(pos.getX(),pos.getY(),pos.getZ(),weird)){
+                valid.add(i);
             }
         }
-        return features.get(0);
+        //get total weight of in bound features
+        int totalWeight = 0;
+        for(int i : valid){
+            totalWeight += weights.get(i);
+        }
+        //Find feature that goes up to that weight
+        if(totalWeight > 0){
+            int random = new Random().nextInt(totalWeight)+1;
+            int cumulative = 0;
+            for(int i : valid){
+                cumulative += weights.get(i);
+                if(cumulative >= random){
+                    return features.get(i);
+                }
+            }
+        }
+        return null;
+    }
+    public record FeatureBounds(Integer[] bounds, Boolean weird){ //xmin, xmax, ymin, ymax, zmin, zmax
+        boolean inBounds(int x, int y, int z, boolean w){
+            int[] pos = new int[]{x,y,z};
+            for(int i = 0; i < pos.length; i++){
+                int j = 2*i;
+                if(bounds[j] != null && pos[i] < bounds[j]) // pos < min
+                {
+                    return false;
+                }
+                if(bounds[j+1] != null && pos[i] > bounds[j+1]) // pos > max
+                {
+                    return false;
+                }
+            }
+            return (weird == null || weird == w);
+        }
     }
 }

@@ -50,7 +50,10 @@ public class SingleTreeDataReloadListener extends SimplePreparableReloadListener
                         Map<String,FeatureData> biomeFeatureMap = new HashMap<>();
                         for(Map.Entry<String, JsonElement> jentry: json.get("values").getAsJsonObject().entrySet()){
                             ArrayList<String> features = new ArrayList<>();
+                            ArrayList<String> blocks = new ArrayList<>();
                             ArrayList<Integer> weights = new ArrayList<>();
+                            ArrayList<FeatureData.FeatureBounds> bounds = new ArrayList<>();
+
                             String biomeID = jentry.getKey();
                             JsonElement value = jentry.getValue();
 
@@ -59,18 +62,22 @@ public class SingleTreeDataReloadListener extends SimplePreparableReloadListener
                                 JsonArray jsonArray = value.getAsJsonArray();
                                 for(JsonElement element : jsonArray){
                                     JsonObject object = element.getAsJsonObject();
-                                    features.add(object.get("feature").getAsString());
-                                    weights.add(object.get("weight").getAsInt());
+                                    readEntry(object, features, weights, bounds, blocks);
                                 }
                             }
-                            //If single entry
+                            //If single entry with just name
                             else if(value.isJsonPrimitive()){
                                 features.add(jentry.getValue().getAsString());
                                 weights.add(1);
+                                bounds.add(new FeatureData.FeatureBounds(new Integer[]{null,null,null,null,null,null},null));
+                                blocks.add("");
                             }
-
+                            //Complicated single entry
+                            else{
+                                readEntry(value.getAsJsonObject(), features, weights, bounds, blocks);
+                            }
                             //Put into map
-                            FeatureData data = new FeatureData(features,weights);
+                            FeatureData data = new FeatureData(features,weights,bounds,blocks);
                             biomeFeatureMap.put(biomeID,data);
                         }
                         if(replace){
@@ -115,5 +122,47 @@ public class SingleTreeDataReloadListener extends SimplePreparableReloadListener
     protected void apply(SaplingOverrides data, ResourceManager resourceManager, ProfilerFiller profilerFiller) {
         TreeOverrideFinder.initSingle(data);
         //System.out.println(data);
+    }
+
+    protected void readEntry(JsonObject object, ArrayList<String> features, ArrayList<Integer> weights, ArrayList<FeatureData.FeatureBounds> bounds, ArrayList<String> blocks){
+        //Get feature
+        features.add(object.get("feature").getAsString());//required
+        //get weight
+        if(object.has("weight")){
+            weights.add(object.get("weight").getAsInt());
+        }
+        else{
+            weights.add(1);
+        }
+        //get weirdness
+        Boolean w = null;
+        if(object.has("weird")){
+            w = object.get("weird").getAsBoolean();
+        }
+        //get pos bounds
+        Integer[] b = new Integer[6]; //xmin, xmax, ymin, ymax, zmin, zmax
+        String[] axis = new String[]{"x", "y", "z"};
+        for(int i = 0;  i < axis.length; i++){
+            if(object.has(axis[i])){
+                JsonObject a = object.get(axis[i]).getAsJsonObject();
+                if(a.has("min")){
+                    b[(2*i)] = a.get("min").getAsInt();
+                }
+                if(a.has("max")){
+                    b[(2*i)+1] = a.get("max").getAsInt();
+                }
+            }
+        }
+        bounds.add(new FeatureData.FeatureBounds(b,w));
+        //Get blocks
+        StringBuilder block = new StringBuilder();
+        if(object.has("block")){
+            JsonArray array = object.getAsJsonArray("block");
+            for(JsonElement element : array) {
+                JsonObject ob = element.getAsJsonObject();
+                block.append(ob.get("id").getAsString()).append(" ");
+            }
+        }
+        blocks.add(block.toString());
     }
 }
