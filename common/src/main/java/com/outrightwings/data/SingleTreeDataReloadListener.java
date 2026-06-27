@@ -13,7 +13,7 @@ import net.minecraft.util.profiling.ProfilerFiller;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import org.slf4j.Logger;
 
@@ -47,7 +47,7 @@ public class SingleTreeDataReloadListener extends SimplePreparableReloadListener
                     if (json != null) {
                         boolean replace = json.get("replace").getAsBoolean();
 
-                        Map<String,FeatureData> biomeFeatureMap = new HashMap<>();
+                        Map<String,FeatureData> biomeFeatureMap = new LinkedHashMap<>();
                         for(Map.Entry<String, JsonElement> jentry: json.get("values").getAsJsonObject().entrySet()){
                             ArrayList<String> features = new ArrayList<>();
                             ArrayList<String> blocks = new ArrayList<>();
