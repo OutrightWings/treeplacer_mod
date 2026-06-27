@@ -14,6 +14,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Tuple;
+import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.DensityFunction;
@@ -33,7 +34,8 @@ public class TreeOverrideFinder {
 
     public static Holder<? extends ConfiguredFeature<?, ?>> GetSaplingOverride(ServerLevel level, BlockState state, BlockPos pos, Tuple<Boolean, Point> isMega){
         ResourceLocation sapling = getResourceLocationFromHolder(state.getBlockHolder());
-        ResourceLocation biome = getResourceLocationFromHolder(level.getBiome(pos));
+        Holder<Biome> biomeHolder = level.getBiome(pos);
+        ResourceLocation biome = getResourceLocationFromHolder(biomeHolder);
         BlockPos groundPos = pos.below();
         BlockState groundState = level.getBlockState(groundPos);
         ResourceLocation groundBlock = getResourceLocationFromHolder(groundState.getBlockHolder());
@@ -43,12 +45,17 @@ public class TreeOverrideFinder {
         featureID = GetBlockOverride(isMega,sapling,pos,groundState,weird,groundBlock,level);
         if(featureID == null) featureID = GetSimpleOverride(isMega,sapling,biome,pos,weird,groundBlock.toString());
         if(featureID == null) featureID = GetSimpleOverride(isMega,sapling,allBiomes,pos,weird,groundBlock.toString());
+        if(featureID == null) featureID = GetBiomeTagOverride(isMega,sapling,biomeHolder,pos,weird,groundBlock.toString());
 
         return getConfiguredFeature(level,featureID);
     }
     private static String GetSimpleOverride(Tuple<Boolean, Point> isMega, ResourceLocation sapling, ResourceLocation key, BlockPos pos, Boolean weird, String block){
         return isMega.getA() ? megaSaplingOverrides.getFeatureID(sapling,key, pos, weird, block) :
                 singleSaplingOverrides.getFeatureID(sapling,key, pos, weird, block) ;
+    }
+    private static String GetBiomeTagOverride(Tuple<Boolean, Point> isMega, ResourceLocation sapling, Holder<Biome> biome, BlockPos pos, Boolean weird, String block){
+        return isMega.getA() ? megaSaplingOverrides.getFeatureIDFromMatchingBiomeTag(sapling, biome, pos, weird, block) :
+                singleSaplingOverrides.getFeatureIDFromMatchingBiomeTag(sapling, biome, pos, weird, block) ;
     }
     private static String GetBlockOverride(Tuple<Boolean, Point> isMega, ResourceLocation sapling, BlockPos pos, BlockState groundState, boolean weird, ResourceLocation groundBlock, ServerLevel level){
         if(isMega.getA()){
