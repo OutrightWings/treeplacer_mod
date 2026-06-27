@@ -1,7 +1,11 @@
 package com.outrightwings.data;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.level.biome.Biome;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,6 +26,25 @@ public class SaplingOverrides{
             Map<String,FeatureData> biomeFeatureMap = overrides.get(saplingID.toString());
             if(biomeFeatureMap.containsKey(biomeID.toString())){
                 return biomeFeatureMap.get(biomeID.toString()).getFeature(pos,weird,block);
+            }
+        }
+        return null;
+    }
+
+    public String getFeatureIDFromMatchingBiomeTag(ResourceLocation saplingID, Holder<Biome> biomeHolder, BlockPos pos, boolean weird, String block){
+        if(overrides.containsKey(saplingID.toString())){
+            Map<String,FeatureData> biomeFeatureMap = overrides.get(saplingID.toString());
+            for(Map.Entry<String,FeatureData> entry : biomeFeatureMap.entrySet()){
+                String biomeTagID = entry.getKey();
+                if(!biomeTagID.startsWith("#")) continue;
+
+                ResourceLocation biomeTagLocation = ResourceLocation.tryParse(biomeTagID.substring(1));
+                if(biomeTagLocation == null) continue;
+
+                TagKey<Biome> biomeTag = TagKey.create(Registries.BIOME, biomeTagLocation);
+                if(biomeHolder.is(biomeTag)){
+                    return entry.getValue().getFeature(pos,weird,block);
+                }
             }
         }
         return null;
