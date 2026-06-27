@@ -7,6 +7,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.DensityFunction;
@@ -25,7 +26,8 @@ public class TreeOverrideFinder {
 
     public static Holder<? extends ConfiguredFeature<?, ?>> GetSaplingOverride(ServerLevel level, BlockState state, BlockPos pos, Tuple isMega){
         Identifier sapling = BuiltInRegistries.BLOCK.getKey(state.getBlock());
-        Identifier biome = getResourceLocationFromHolder(level.getBiome(pos));
+        Holder<Biome> biomeHolder = level.getBiome(pos);
+        Identifier biome = getResourceLocationFromHolder(biomeHolder);
         BlockPos groundPos = pos.below();
         BlockState groundState = level.getBlockState(groundPos);
         Identifier groundBlock = BuiltInRegistries.BLOCK.getKey(groundState.getBlock());
@@ -35,6 +37,7 @@ public class TreeOverrideFinder {
         featureID = GetBlockOverride(isMega,sapling,pos,groundState,weird,groundBlock,level);
         if(featureID == null) featureID = GetSimpleOverride(isMega,sapling,biome,pos,weird,groundBlock.toString());
         if(featureID == null) featureID = GetSimpleOverride(isMega,sapling,allBiomes,pos,weird,groundBlock.toString());
+        if(featureID == null) featureID = GetBiomeTagOverride(isMega,sapling,biomeHolder,pos,weird,groundBlock.toString());
 
         return getConfiguredFeature(level,featureID);
     }
@@ -43,11 +46,16 @@ public class TreeOverrideFinder {
                 singleSaplingOverrides.getFeatureID(sapling,key, pos, weird, block) ;
     }
     private static String GetBlockOverride(Tuple isMega, Identifier sapling, BlockPos pos, BlockState groundState, boolean weird, Identifier groundBlock, ServerLevel level){
-        if(isMega.bool()){
-            boolean groundAllSame = TreePlacer.isAllSame(level,pos,groundState,isMega.point());
-            if(!groundAllSame) return null;
+        if (isMega.bool()) {
+            boolean groundAllSame = TreePlacer.isAllSame(level, pos, groundState, isMega.point());
+            if (!groundAllSame) return null;
         }
-        return GetSimpleOverride(isMega,sapling,groundBlock,pos,weird,groundBlock.toString());
+        return GetSimpleOverride(isMega, sapling, groundBlock, pos, weird, groundBlock.toString());
+    }
+
+    private static String GetBiomeTagOverride(Tuple isMega, Identifier sapling, Holder<Biome> biome, BlockPos pos, Boolean weird, String block) {
+        return isMega.bool() ? megaSaplingOverrides.getFeatureIDFromMatchingBiomeTag(sapling, biome, pos, weird, block) :
+                singleSaplingOverrides.getFeatureIDFromMatchingBiomeTag(sapling, biome, pos, weird, block);
     }
 
 
@@ -55,7 +63,8 @@ public class TreeOverrideFinder {
     private static Identifier getResourceLocationFromHolder(Holder<?> holder) {
         return holder.unwrap().map(ResourceKey::identifier, (empty) -> null);
     }
-    private static Boolean getWeirdness(ServerLevel level, BlockPos pos){
+
+    private static Boolean getWeirdness(ServerLevel level, BlockPos pos) {
         ChunkGenerator gen = level.getChunkSource().getGenerator();
         RandomState randomstate = level.getChunkSource().randomState();
         NoiseRouter noiserouter = randomstate.router();
@@ -63,11 +72,14 @@ public class TreeOverrideFinder {
         double weirdness = noiserouter.ridges().compute(densityfunction$singlepointcontext);
         return weirdness > 0;
     }
-    private static Holder<ConfiguredFeature<?, ?>> getConfiguredFeature(ServerLevel level, String feature){
-        if(feature == null) return null;
+
+    private static Holder<ConfiguredFeature<?, ?>> getConfiguredFeature(ServerLevel level, String feature) {
+        if (feature == null) return null;
         //System.out.println(feature);
         ResourceKey<ConfiguredFeature<?, ?>> key = ResourceKey.create(Registries.CONFIGURED_FEATURE, Identifier.parse(feature));
         return level.registryAccess().getOrThrow(key);
     }
-    public record Tuple(Boolean bool, Point point){}
+
+    public record Tuple(Boolean bool, Point point) {
+    }
 }
