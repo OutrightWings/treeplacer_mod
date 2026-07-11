@@ -1,22 +1,22 @@
 {
-    "required": true,
-    "minVersion": "0.8",
-    "package": "com.outrightwings.mixin",
-    "refmap": "${mod_id}.refmap.json",
-    "compatibilityLevel": "JAVA_17",
-    "mixins": [
-        "AbstractTreeGrowerMixin",
-        "AbstractMegaTreeGrowerMixin",
-        "FungusBlockMixin",
-        "MushroomBlockMixin"
-    ],
-    "client": [
-
-    ],
-    "server": [
-    ],
-    "injectors": {
-        "defaultRequire": 1
-    }
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.outrightwings.mixin",
+  "refmap": "${mod_id}.refmap.json",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "AbstractMegaTreeGrowerMixin",
+    "AbstractTreeGrowerMixin",
+    "BushBlockMixin",
+    "FungusBlockMixin",
+    "MushroomBlockMixin"
+  ],
+  "client": [
+  ],
+  "server": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
 }
 
