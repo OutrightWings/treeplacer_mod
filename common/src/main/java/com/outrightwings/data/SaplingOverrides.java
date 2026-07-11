@@ -7,6 +7,8 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,17 +24,17 @@ public class SaplingOverrides{
         overrides.put(sapling,biomeFeature);
     }
 
-    public String getFeatureID(Identifier saplingID, Identifier biomeID, BlockPos pos, boolean weird, String block){
+    public String getFeatureID(Identifier saplingID, Identifier biomeID, BlockPos pos, boolean weird, BlockState groundState){
         if(overrides.containsKey(saplingID.toString())){
             Map<String,FeatureData> biomeFeatureMap = overrides.get(saplingID.toString());
             if(biomeFeatureMap.containsKey(biomeID.toString())){
-                return biomeFeatureMap.get(biomeID.toString()).getFeature(pos,weird,block);
+                return biomeFeatureMap.get(biomeID.toString()).getFeature(pos,weird,groundState);
             }
         }
         return null;
     }
 
-    public String getFeatureIDFromMatchingBiomeTag(Identifier saplingID, Holder<Biome> biomeHolder, BlockPos pos, boolean weird, String block){
+    public String getFeatureIDFromMatchingBiomeTag(Identifier saplingID, Holder<Biome> biomeHolder, BlockPos pos, boolean weird, BlockState groundState){
         if(overrides.containsKey(saplingID.toString())){
             Map<String,FeatureData> biomeFeatureMap = overrides.get(saplingID.toString());
             for(Map.Entry<String,FeatureData> entry : biomeFeatureMap.entrySet()){
@@ -44,7 +46,25 @@ public class SaplingOverrides{
 
                 TagKey<Biome> biomeTag = TagKey.create(Registries.BIOME, biomeTagLocation);
                 if(biomeHolder.is(biomeTag)){
-                    return entry.getValue().getFeature(pos,weird,block);
+                    return entry.getValue().getFeature(pos,weird,groundState);
+                }
+            }
+        }
+        return null;
+    }
+    public String getFeatureIDFromMatchingBlockTag(Identifier saplingID, BlockState blockState, BlockPos pos, boolean weird){
+        if(overrides.containsKey(saplingID.toString())){
+            Map<String,FeatureData> biomeFeatureMap = overrides.get(saplingID.toString());
+            for(Map.Entry<String,FeatureData> entry : biomeFeatureMap.entrySet()){
+                String blockTagID = entry.getKey();
+                if(!blockTagID.startsWith("#")) continue;
+
+                Identifier blockTagLocation = Identifier.tryParse(blockTagID.substring(1));
+                if(blockTagLocation == null) continue;
+
+                TagKey<Block> blockTag = TagKey.create(Registries.BLOCK, blockTagLocation);
+                if(blockState.is(blockTag)){
+                    return entry.getValue().getFeature(pos,weird,blockState);
                 }
             }
         }

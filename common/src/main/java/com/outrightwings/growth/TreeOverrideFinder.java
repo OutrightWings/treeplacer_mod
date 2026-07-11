@@ -34,28 +34,37 @@ public class TreeOverrideFinder {
         Boolean weird = getWeirdness(level,pos);
 
         String featureID;
-        featureID = GetBlockOverride(isMega,sapling,pos,groundState,weird,groundBlock,level);
-        if(featureID == null) featureID = GetSimpleOverride(isMega,sapling,biome,pos,weird,groundBlock.toString());
-        if(featureID == null) featureID = GetSimpleOverride(isMega,sapling,allBiomes,pos,weird,groundBlock.toString());
-        if(featureID == null) featureID = GetBiomeTagOverride(isMega,sapling,biomeHolder,pos,weird,groundBlock.toString());
+        featureID = GetBlockOverride(isMega,sapling,pos,groundState,weird,level);
+        if(featureID == null) featureID = GetBlockTagOverride(isMega,sapling,pos,groundState,weird,level);
+        if(featureID == null) featureID = GetSimpleOverride(isMega,sapling,biome,pos,weird,groundState);
+        if(featureID == null) featureID = GetBiomeTagOverride(isMega,sapling,biomeHolder,pos,weird,groundState);
+        if(featureID == null) featureID = GetSimpleOverride(isMega,sapling,allBiomes,pos,weird,groundState);
 
         return getConfiguredFeature(level,featureID);
     }
-    private static String GetSimpleOverride(Tuple isMega, Identifier sapling, Identifier key, BlockPos pos, Boolean weird, String block){
-        return isMega.bool() ? megaSaplingOverrides.getFeatureID(sapling,key, pos, weird, block) :
-                singleSaplingOverrides.getFeatureID(sapling,key, pos, weird, block) ;
+    private static String GetSimpleOverride(Tuple isMega, Identifier sapling, Identifier key, BlockPos pos, Boolean weird, BlockState groundState){
+        return isMega.bool() ? megaSaplingOverrides.getFeatureID(sapling,key, pos, weird, groundState) :
+                singleSaplingOverrides.getFeatureID(sapling,key, pos, weird, groundState) ;
     }
-    private static String GetBlockOverride(Tuple isMega, Identifier sapling, BlockPos pos, BlockState groundState, boolean weird, Identifier groundBlock, ServerLevel level){
-        if (isMega.bool()) {
-            boolean groundAllSame = TreePlacer.isAllSame(level, pos, groundState, isMega.point());
-            if (!groundAllSame) return null;
+    private static String GetBiomeTagOverride(Tuple isMega, Identifier sapling, Holder<Biome> biome, BlockPos pos, Boolean weird, BlockState groundState){
+        return isMega.bool() ? megaSaplingOverrides.getFeatureIDFromMatchingBiomeTag(sapling, biome, pos, weird, groundState) :
+                singleSaplingOverrides.getFeatureIDFromMatchingBiomeTag(sapling, biome, pos, weird, groundState) ;
+    }
+    private static String GetBlockOverride(Tuple isMega, Identifier sapling, BlockPos pos, BlockState groundState, boolean weird, ServerLevel level){
+        if(isMega.bool()){
+            boolean groundAllSame = TreePlacer.isAllSame(level,pos,groundState,isMega.point());
+            if(!groundAllSame) return null;
         }
-        return GetSimpleOverride(isMega, sapling, groundBlock, pos, weird, groundBlock.toString());
+        Identifier groundBlock = BuiltInRegistries.BLOCK.getKey(groundState.getBlock());
+        return GetSimpleOverride(isMega,sapling,groundBlock,pos,weird,groundState);
     }
-
-    private static String GetBiomeTagOverride(Tuple isMega, Identifier sapling, Holder<Biome> biome, BlockPos pos, Boolean weird, String block) {
-        return isMega.bool() ? megaSaplingOverrides.getFeatureIDFromMatchingBiomeTag(sapling, biome, pos, weird, block) :
-                singleSaplingOverrides.getFeatureIDFromMatchingBiomeTag(sapling, biome, pos, weird, block);
+    private static String GetBlockTagOverride(Tuple isMega, Identifier sapling, BlockPos pos, BlockState groundState, boolean weird, ServerLevel level){
+        if(isMega.bool()){
+            boolean groundAllSame = TreePlacer.isAllSame(level,pos,groundState,isMega.point());
+            if(!groundAllSame) return null;
+        }
+        return isMega.bool() ? megaSaplingOverrides.getFeatureIDFromMatchingBlockTag(sapling,groundState,pos,weird) :
+                singleSaplingOverrides.getFeatureIDFromMatchingBlockTag(sapling,groundState,pos,weird);
     }
 
 
