@@ -30,7 +30,6 @@ public class TreeOverrideFinder {
         Identifier biome = getResourceLocationFromHolder(biomeHolder);
         BlockPos groundPos = pos.below();
         BlockState groundState = level.getBlockState(groundPos);
-        Identifier groundBlock = BuiltInRegistries.BLOCK.getKey(groundState.getBlock());
         Boolean weird = getWeirdness(level,pos);
 
         String featureID;
@@ -42,14 +41,17 @@ public class TreeOverrideFinder {
 
         return getConfiguredFeature(level,featureID);
     }
+
     private static String GetSimpleOverride(Tuple isMega, Identifier sapling, Identifier key, BlockPos pos, Boolean weird, BlockState groundState){
         return isMega.bool() ? megaSaplingOverrides.getFeatureID(sapling,key, pos, weird, groundState) :
                 singleSaplingOverrides.getFeatureID(sapling,key, pos, weird, groundState) ;
     }
+
     private static String GetBiomeTagOverride(Tuple isMega, Identifier sapling, Holder<Biome> biome, BlockPos pos, Boolean weird, BlockState groundState){
         return isMega.bool() ? megaSaplingOverrides.getFeatureIDFromMatchingBiomeTag(sapling, biome, pos, weird, groundState) :
                 singleSaplingOverrides.getFeatureIDFromMatchingBiomeTag(sapling, biome, pos, weird, groundState) ;
     }
+
     private static String GetBlockOverride(Tuple isMega, Identifier sapling, BlockPos pos, BlockState groundState, boolean weird, ServerLevel level){
         if(isMega.bool()){
             boolean groundAllSame = TreePlacer.isAllSame(level,pos,groundState,isMega.point());
@@ -58,6 +60,7 @@ public class TreeOverrideFinder {
         Identifier groundBlock = BuiltInRegistries.BLOCK.getKey(groundState.getBlock());
         return GetSimpleOverride(isMega,sapling,groundBlock,pos,weird,groundState);
     }
+
     private static String GetBlockTagOverride(Tuple isMega, Identifier sapling, BlockPos pos, BlockState groundState, boolean weird, ServerLevel level){
         if(isMega.bool()){
             boolean groundAllSame = TreePlacer.isAllSame(level,pos,groundState,isMega.point());
@@ -69,7 +72,7 @@ public class TreeOverrideFinder {
 
 
     //Stole and modified DebugScreen's method
-    private static Identifier getResourceLocationFromHolder(Holder<?> holder) {
+    public static Identifier getResourceLocationFromHolder(Holder<?> holder) {
         return holder.unwrap().map(ResourceKey::identifier, (empty) -> null);
     }
 

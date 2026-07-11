@@ -1,8 +1,9 @@
 package com.outrightwings.data;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -17,7 +18,7 @@ public record FeatureData(ArrayList<String> features, ArrayList<Integer> weights
     String getFeature(BlockPos pos, boolean weird, BlockState groundState){
         //Get indexes of features in bounds
         ArrayList<Integer> valid = new ArrayList<>();
-        String groundBlock = getResourceLocationFromHolder(groundState.getBlockHolder()).toString();
+        String groundBlock = BuiltInRegistries.BLOCK.getKey(groundState.getBlock()).toString();
 
         for(int i = 0; i < bounds.size(); i++){
             //Check for blocktag
@@ -27,7 +28,7 @@ public record FeatureData(ArrayList<String> features, ArrayList<Integer> weights
             boolean has = false;
             for(String e : blockEntries){
                 if(e.startsWith("#")){
-                    ResourceLocation blockTagLocation = ResourceLocation.tryParse(e.substring(1));
+                    Identifier blockTagLocation = Identifier.tryParse(e.substring(1));
                     if(blockTagLocation == null) continue;
                     TagKey<Block> blockTag = TagKey.create(Registries.BLOCK, blockTagLocation);
                     has = groundState.is(blockTag);
