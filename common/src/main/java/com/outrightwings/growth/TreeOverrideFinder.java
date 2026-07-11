@@ -38,36 +38,44 @@ public class TreeOverrideFinder {
         ResourceLocation biome = getResourceLocationFromHolder(biomeHolder);
         BlockPos groundPos = pos.below();
         BlockState groundState = level.getBlockState(groundPos);
-        ResourceLocation groundBlock = getResourceLocationFromHolder(groundState.getBlockHolder());
         Boolean weird = getWeirdness(level,pos);
 
         String featureID;
-        featureID = GetBlockOverride(isMega,sapling,pos,groundState,weird,groundBlock,level);
-        if(featureID == null) featureID = GetSimpleOverride(isMega,sapling,biome,pos,weird,groundBlock.toString());
-        if(featureID == null) featureID = GetSimpleOverride(isMega,sapling,allBiomes,pos,weird,groundBlock.toString());
-        if(featureID == null) featureID = GetBiomeTagOverride(isMega,sapling,biomeHolder,pos,weird,groundBlock.toString());
+        featureID = GetBlockOverride(isMega,sapling,pos,groundState,weird,level);
+        if(featureID == null) featureID = GetBlockTagOverride(isMega,sapling,pos,groundState,weird,level);
+        if(featureID == null) featureID = GetSimpleOverride(isMega,sapling,biome,pos,weird,groundState);
+        if(featureID == null) featureID = GetBiomeTagOverride(isMega,sapling,biomeHolder,pos,weird,groundState);
+        if(featureID == null) featureID = GetSimpleOverride(isMega,sapling,allBiomes,pos,weird,groundState);
 
         return getConfiguredFeature(level,featureID);
     }
-    private static String GetSimpleOverride(Tuple<Boolean, Point> isMega, ResourceLocation sapling, ResourceLocation key, BlockPos pos, Boolean weird, String block){
-        return isMega.getA() ? megaSaplingOverrides.getFeatureID(sapling,key, pos, weird, block) :
-                singleSaplingOverrides.getFeatureID(sapling,key, pos, weird, block) ;
+    private static String GetSimpleOverride(Tuple<Boolean, Point> isMega, ResourceLocation sapling, ResourceLocation key, BlockPos pos, Boolean weird, BlockState groundState){
+        return isMega.getA() ? megaSaplingOverrides.getFeatureID(sapling,key, pos, weird, groundState) :
+                singleSaplingOverrides.getFeatureID(sapling,key, pos, weird, groundState) ;
     }
-    private static String GetBiomeTagOverride(Tuple<Boolean, Point> isMega, ResourceLocation sapling, Holder<Biome> biome, BlockPos pos, Boolean weird, String block){
-        return isMega.getA() ? megaSaplingOverrides.getFeatureIDFromMatchingBiomeTag(sapling, biome, pos, weird, block) :
-                singleSaplingOverrides.getFeatureIDFromMatchingBiomeTag(sapling, biome, pos, weird, block) ;
+    private static String GetBiomeTagOverride(Tuple<Boolean, Point> isMega, ResourceLocation sapling, Holder<Biome> biome, BlockPos pos, Boolean weird, BlockState groundState){
+        return isMega.getA() ? megaSaplingOverrides.getFeatureIDFromMatchingBiomeTag(sapling, biome, pos, weird, groundState) :
+                singleSaplingOverrides.getFeatureIDFromMatchingBiomeTag(sapling, biome, pos, weird, groundState) ;
     }
-    private static String GetBlockOverride(Tuple<Boolean, Point> isMega, ResourceLocation sapling, BlockPos pos, BlockState groundState, boolean weird, ResourceLocation groundBlock, ServerLevel level){
+    private static String GetBlockOverride(Tuple<Boolean, Point> isMega, ResourceLocation sapling, BlockPos pos, BlockState groundState, boolean weird, ServerLevel level){
         if(isMega.getA()){
             boolean groundAllSame = TreePlacer.isAllSame(level,pos,groundState,isMega.getB());
             if(!groundAllSame) return null;
         }
-        return GetSimpleOverride(isMega,sapling,groundBlock,pos,weird,groundBlock.toString());
+        ResourceLocation groundBlock = getResourceLocationFromHolder(groundState.getBlockHolder());
+        return GetSimpleOverride(isMega,sapling,groundBlock,pos,weird,groundState);
+    }
+    private static String GetBlockTagOverride(Tuple<Boolean, Point> isMega, ResourceLocation sapling, BlockPos pos, BlockState groundState, boolean weird, ServerLevel level){
+        if(isMega.getA()){
+            boolean groundAllSame = TreePlacer.isAllSame(level,pos,groundState,isMega.getB());
+            if(!groundAllSame) return null;
+        }
+        return isMega.getA() ? megaSaplingOverrides.getFeatureIDFromMatchingBlockTag(sapling,groundState,pos,weird) :
+                singleSaplingOverrides.getFeatureIDFromMatchingBlockTag(sapling,groundState,pos,weird);
     }
 
-
     //Stole and modified DebugScreen's method
-    private static ResourceLocation getResourceLocationFromHolder(Holder<?> holder) {
+    public static ResourceLocation getResourceLocationFromHolder(Holder<?> holder) {
         return holder.unwrap().map(ResourceKey::location, (empty) -> null);
     }
     private static Boolean getWeirdness(ServerLevel level, BlockPos pos){
