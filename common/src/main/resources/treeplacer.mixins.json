@@ -6,12 +6,11 @@
     "compatibilityLevel": "JAVA_17",
     "mixins": [
         "TreeGrowerMixin",
-        "BushBlockMixin",
         "FungusBlockMixin",
-        "MushroomBlockMixin"
+        "MushroomBlockMixin",
+        "BushBlockMixin"
     ],
     "client": [
-
     ],
     "server": [
     ],

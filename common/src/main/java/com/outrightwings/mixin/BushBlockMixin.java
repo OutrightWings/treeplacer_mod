@@ -4,8 +4,9 @@ import com.outrightwings.Constants;
 import com.outrightwings.growth.TreeOverrideFinder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -29,13 +30,13 @@ public class BushBlockMixin extends Block{
         if (level instanceof Level real) {
             //Get tag
             BlockState thisBlock = this.defaultBlockState();
-            String blockID = TreeOverrideFinder.getResourceLocationFromHolder(thisBlock.getBlockHolder()).toString();
-            ResourceLocation blockTagLocation = ResourceLocation.tryParse(Constants.MOD_ID + ":" + blockID.replace(":", "_"));
+            String blockID = BuiltInRegistries.BLOCK.getKey(thisBlock.getBlock()).toString();
+            Identifier blockTagLocation = Identifier.tryParse(Constants.MOD_ID + ":" + blockID.replace(":", "_"));
             if (blockTagLocation != null) {
                 //Check if tag was defined
                 TagKey<Block> blockTag = TagKey.create(Registries.BLOCK, blockTagLocation);
                 Registry<Block> registry = real.registryAccess().lookupOrThrow(Registries.BLOCK);
-                if (registry.getTags().anyMatch(pair -> pair.key().equals(blockTag))) {
+                if (registry.listTags().anyMatch(tag -> tag.key().equals(blockTag))) {
                     cir.setReturnValue(state.is(blockTag));
                 }
             }
