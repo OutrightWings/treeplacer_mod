@@ -27,12 +27,18 @@ import java.util.Optional;
 
 public class TreeOverrideFinder {
     private static final ResourceLocation allBiomes = new ResourceLocation("treeplacer:all_biomes");
+    private static final String noTree = "treeplacer:none";
     private static SaplingOverrides singleSaplingOverrides;
     private static SaplingOverrides megaSaplingOverrides;
     public static void initSingle(SaplingOverrides overrides){singleSaplingOverrides=overrides;}
     public static void initMega(SaplingOverrides overrides){megaSaplingOverrides=overrides;}
 
     public static Holder<? extends ConfiguredFeature<?, ?>> GetSaplingOverride(ServerLevel level, BlockState state, BlockPos pos, Tuple<Boolean, Point> isMega){
+        String featureID = GetSaplingOverrideFeatureID(level,state,pos,isMega);
+        return GetConfiguredFeature(level,featureID);
+    }
+
+    public static String GetSaplingOverrideFeatureID(ServerLevel level, BlockState state, BlockPos pos, Tuple<Boolean, Point> isMega){
         ResourceLocation sapling = getResourceLocationFromHolder(state.getBlockHolder());
         Holder<Biome> biomeHolder = level.getBiome(pos);
         ResourceLocation biome = getResourceLocationFromHolder(biomeHolder);
@@ -47,7 +53,11 @@ public class TreeOverrideFinder {
         if(featureID == null) featureID = GetBiomeTagOverride(isMega,sapling,biomeHolder,pos,weird,groundState);
         if(featureID == null) featureID = GetSimpleOverride(isMega,sapling,allBiomes,pos,weird,groundState);
 
-        return getConfiguredFeature(level,featureID);
+        return featureID;
+    }
+
+    public static boolean IsNoTree(String featureID){
+        return noTree.equals(featureID);
     }
     private static String GetSimpleOverride(Tuple<Boolean, Point> isMega, ResourceLocation sapling, ResourceLocation key, BlockPos pos, Boolean weird, BlockState groundState){
         return isMega.getA() ? megaSaplingOverrides.getFeatureID(sapling,key, pos, weird, groundState) :
@@ -86,7 +96,7 @@ public class TreeOverrideFinder {
         double weirdness = noiserouter.ridges().compute(densityfunction$singlepointcontext);
         return weirdness > 0;
     }
-    private static Holder<ConfiguredFeature<?, ?>> getConfiguredFeature(ServerLevel level, String feature){
+    public static Holder<ConfiguredFeature<?, ?>> GetConfiguredFeature(ServerLevel level, String feature){
         if(feature == null) return null;
         ResourceKey<ConfiguredFeature<?, ?>> key = FeatureUtils.createKey(feature);
         return level.registryAccess().registryOrThrow(Registries.CONFIGURED_FEATURE).getHolder(key).orElse(null);

@@ -30,7 +30,9 @@ public class TreePlacer {
     }
     private static int attemptOverride(ServerLevel level, ChunkGenerator chunkGenerator, BlockPos pos, BlockState state, RandomSource random,Tuple<Boolean, Point> isMega){
         Holder<? extends ConfiguredFeature<?, ?>> holder;
-        holder = TreeOverrideFinder.GetSaplingOverride(level,state,pos,isMega);
+        String featureID = TreeOverrideFinder.GetSaplingOverrideFeatureID(level,state,pos,isMega);
+        if(TreeOverrideFinder.IsNoTree(featureID)) return 0;
+        holder = TreeOverrideFinder.GetConfiguredFeature(level,featureID);
         return placeTree(level,chunkGenerator,pos,state,random,holder,isMega);
     }
     private static int placeTree(ServerLevel level, ChunkGenerator chunkGenerator, BlockPos pos, BlockState state, RandomSource random,Holder<? extends ConfiguredFeature<?, ?>> holder,Tuple<Boolean, Point> isMega){
